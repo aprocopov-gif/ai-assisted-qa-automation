@@ -8,8 +8,8 @@ export class LoginPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.emailInput = page.getByLabel('Email');
-    this.passwordInput = page.getByLabel('Password');
+    this.emailInput = page.getByTitle('Email');
+    this.passwordInput = page.getByPlaceholder('Password');
     this.signInButton = page.getByRole('button', { name: 'Sign In' });
   }
 
