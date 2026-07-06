@@ -61,7 +61,7 @@ export class ProgramsPage extends BasePage {
   }
 
   nameParagraph(name: string) {
-    return this.page.getByAltText(name, { exact: true }).first();
+    return this.page.getByText(name, { exact: true }).first();
   }
 
   programCell(name: string) {
