@@ -28,6 +28,7 @@ alwaysApply: false
 
 - Atlassian MCP — read ticket, query backlog, add labels
 - GitHub MCP or `gh` — read runs, create PRs
+- Playwright MCP — re-discover locators during self-heal (accessibility tree on live app)
 - Terminal — `npx playwright test`
 - Delegate to specialist agents (`test-writer`, `triage`, `bug-reporter`)
 
@@ -35,6 +36,8 @@ alwaysApply: false
 
 - `jira-ticket-analyzer` — analyze tickets with acceptance criteria
 - `explore-and-generate` — ticket-less coverage discovery and Gherkin plan output
+- `ci-failure-triage` — classify a red CI run (drift vs real app bug)
+- `self-heal` — repair drift-classified locator failures (POM patch, re-run, repair PR)
 
 ## Routing
 
@@ -43,11 +46,38 @@ Shared pipeline for single-ticket and Backlog mode (Backlog runs it once per tic
 1. **Analyze** — `jira-ticket-analyzer` (ticket) or `explore-and-generate` (no ticket) → save plan to `features/{ticket_number}` or `features/explore-{slug}`
 2. **Implement** — delegate to `test-writer` (ref: playwright-conventions.mdc)
 3. **Verify** — `npx playwright test` (scope to new/changed spec when possible)
-4. **Run is red** → delegate to `triage`
-5. **Real app bug** → delegate to `bug-reporter` (human approves filing)
-6. **Test issue** → delegate to `test-writer` (propose fix, human OKs)
+4. **Run is red** → delegate to `triage` (apply `ci-failure-triage` skill)
+5. **Real app bug** → delegate to `bug-reporter` (human approves filing); **never heal**
+6. **Test issue / drift** → apply **Heal on red** below (`self-heal` skill)
+7. **Test issue (non-drift)** — logic, data, timing, assertion intent → delegate to `test-writer` (propose fix, human OKs)
 
 Use `jira-ticket-analyzer` when a Jira ticket or ACs exist; use `explore-and-generate` only for ticket-less coverage requests.
+
+## Heal on red
+
+When CI or local verification is red, **triage first** — never patch locators before classification.
+
+### Flow
+
+1. **Classify** — delegate to `triage` (`ci-failure-triage` skill). Collect: root cause, failing test, trace path, affected POM file, run id / URL, classification.
+2. **Real app bug** → delegate to `bug-reporter`; file and link the Jira ticket. **Do not heal.**
+3. **Drift (test issue)** — stale selector, renamed label, moved element → apply `self-heal` skill:
+   - Re-discover the element via **Playwright MCP** against the live app (accessibility tree; role/label first).
+   - Patch **only** the POM locator (minimal diff; no spec edits).
+   - Re-run the failing spec and prove **green** with **assertions unchanged** — no weakening, deletion, or replacement.
+   - Open a **repair PR** linked to the failed run and triage comment. Branch e.g. `heal/<spec-slug>-<short-desc>`. **Never merge** — a human approves.
+
+### Budget and stop conditions
+
+- **At most 5 heals per run** (orchestrator session / backlog batch). After 5, stop and escalate with a summary of what was healed and what remains red.
+- **Stop and escalate** if a heal cannot prove green without touching assertions, specs, waits, or test logic.
+- **Never heal an assertion** — a green run via assertion changes is a failure; escalate.
+- If the same locator breaks again after a heal, stop — likely not simple drift.
+
+### Hard refusals (orchestrator)
+
+- Never heal when triage says **real app bug**, or classification is **missing / ambiguous**.
+- Never merge a repair PR — human approval required (see Guardrails).
 
 ## Backlog mode
 

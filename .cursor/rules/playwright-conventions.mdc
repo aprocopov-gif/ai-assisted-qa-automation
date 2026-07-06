@@ -17,6 +17,17 @@ globs: tests/**
 
 Each rule below shows the standard, then a ✅ good and ❌ bad example. When in doubt, prefer the example a *user* (or a screen reader) would recognize over the one coupled to markup.
 
+## Refusals (hard stops)
+
+The agent **must refuse** the following — stop work, explain the conflict, and do not proceed until the user resolves it. These are not preferences.
+
+- **Do not weaken or delete an assertion to make a test pass.** If an assertion fails, fix the product, fix the test intent, or file a bug — never remove, soften, or skip the check to get green.
+- **Do not self-heal a failure triage classified as a real app bug.** Route it to Jira (via jira-bug-reporter) and stop; locator or timing patches mask defects.
+- **Do not replace a role/label/testid locator with CSS or XPath** — not even “temporarily.” Refuse and ask for a user-facing locator or a flagged testid escape hatch.
+- **Do not add `waitForTimeout` (or any fixed sleep)** to “stabilize” a test. Use web-first assertions or refuse and report the missing wait condition.
+- **Do not hardcode credentials** (email, password, API tokens, URLs with secrets). Use `process.env` or refuse and ask for env configuration.
+- **Do not use the `any` type** in test, fixture, POM, or helper code. Type it properly or refuse and ask for the correct interface.
+
 ## 1. Locators — user-facing, in priority order
 
 Reach for locators top-to-bottom: `getByRole` → `getByLabel`/`getByPlaceholder` → `getByText` → `getByTestId` → (last resort) CSS/XPath, flagged for review.
