@@ -20,7 +20,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-001 (AC1) — Empty TODO list is ready to receive items on first load',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async ({ page }) => {
       await expect(page).toHaveTitle('React • TodoMVC');
       await expect(
@@ -40,7 +40,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-002 (AC2) — User adds a single item by pressing Enter',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addTodo('Buy milk');
 
@@ -59,7 +59,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-003 (AC2) — User adds exactly 4 items in insertion order',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       const titles = ['Buy milk', 'Walk the dog', 'Write tests', 'Read book'];
       await app.addMany(titles);
@@ -77,7 +77,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-004 (AC3) — Marking an item as finished updates UI, counter, and storage',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       const titles = ['Buy milk', 'Walk the dog', 'Write tests', 'Read book'];
       await app.addMany(titles);
@@ -101,7 +101,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-005 (AC3) — A finished item stays finished across reload',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async ({ page }) => {
       const titles = ['Buy milk', 'Walk the dog', 'Write tests', 'Read book'];
       await app.addMany(titles);
@@ -125,7 +125,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-006 (AC4) — User removes a single item via the × destroy button',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addMany(['Buy milk', 'Walk the dog']);
 
@@ -144,7 +144,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-007 (AC4) — Removing the last item resets the UI to empty state',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async ({ page }) => {
       await app.addTodo('Buy milk');
 
@@ -166,7 +166,7 @@ test.describe('Positive flows', () => {
 
   test(
     'TC-008 (AC2 + AC4) — Removing one item from a list of 4 leaves 3 in original order',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addMany([
         'Buy milk',

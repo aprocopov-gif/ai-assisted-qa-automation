@@ -20,7 +20,7 @@ test.describe('Negative flows', () => {
 
   test(
     'TC-009 (AC2 negative) — Empty input + Enter does NOT create a todo',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.newTodo.focus();
       await app.newTodo.press('Enter');
@@ -34,7 +34,7 @@ test.describe('Negative flows', () => {
 
   test(
     'TC-010 (AC2 negative) — Whitespace-only input does NOT create a todo',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addTodo('   ');
 
@@ -47,7 +47,7 @@ test.describe('Negative flows', () => {
 
   test(
     'TC-011 (AC3 negative) — Toggling a finished item back unfinishes it',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addMany(['Buy milk', 'Walk the dog']);
       await app.toggle('Buy milk');
@@ -66,7 +66,7 @@ test.describe('Negative flows', () => {
 
   test(
     'TC-012 (AC4 negative) — Removing one item must NOT remove other items',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       const titles = ['Buy milk', 'Walk the dog', 'Write tests', 'Read book'];
       await app.addMany(titles);
@@ -96,7 +96,7 @@ test.describe('Negative flows', () => {
 
   test(
     'TC-013 (AC3 + AC4 negative) — Finished+removed item does not leak completed state to remaining items',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addMany(['Buy milk', 'Walk the dog', 'Write tests']);
       await app.toggle('Buy milk');
