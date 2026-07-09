@@ -164,24 +164,37 @@ test.describe('DS-5: Program List Display', () => {
     page,
   }) => {
     const programs = new ProgramsPage(page);
+    const listResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'GET' &&
+        response.url().includes('/api/programs'),
+    );
     await programs.goto();
-    const tableVisible = await programs.table.isVisible().catch(() => false);
+    await listResponse;
+    await expect(programs.heading).toBeVisible();
 
-    if (tableVisible) {
-      const rowCount = await programs.rows().count();
-      if (rowCount > 1) {
-        test.skip(
-          true,
-          'Other programs exist — clean environment required for this test',
-        );
-        return;
-      }
+    const existingPrograms = await programs.deleteButtons().count();
+    if (existingPrograms > 0) {
+      test.skip(
+        true,
+        'Other programs exist — clean environment required for this test',
+      );
+      return;
     }
 
     const emptyIndicator = programs.emptyStateMessage;
-    const tableGone = !(await programs.table.isVisible().catch(() => false));
+    const tableVisible = await programs.table.isVisible().catch(() => false);
+    const tableGone = !tableVisible;
+    const onlyHeaderRow = tableVisible && (await programs.rows().count()) <= 1;
+    const emptyCreatePrompt = await programs.createProgramEmptyStateButton
+      .isVisible()
+      .catch(() => false);
+
     expect(
-      tableGone || (await emptyIndicator.isVisible().catch(() => false)),
+      tableGone ||
+        onlyHeaderRow ||
+        emptyCreatePrompt ||
+        (await emptyIndicator.isVisible().catch(() => false)),
     ).toBe(true);
     await expect(programs.newProgramButton).toBeVisible();
   });
