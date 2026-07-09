@@ -44,7 +44,7 @@ test.describe('Programs: AI Generation Config', () => {
     wireProgramTracking(page, trackProgram);
   });
 
-  test('TC-001: Expanding AI Generation Config reveals optional curriculum fields', async ({
+  test('TC-001: Expanding AI Generation Config reveals optional curriculum fields', { tag: '@smoke' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -67,7 +67,7 @@ test.describe('Programs: AI Generation Config', () => {
     );
   });
 
-  test('TC-002: Collapsing AI Generation Config restores the expand toggle label', async ({
+  test('TC-002: Collapsing AI Generation Config restores the expand toggle label', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -83,7 +83,7 @@ test.describe('Programs: AI Generation Config', () => {
     await expect(modal.aiConfigToggle).toHaveText(/Show AI Generation Config/i);
   });
 
-  test('TC-003: Admin creates a program with AI Generation Config fields populated', async ({
+  test('TC-003: Admin creates a program with AI Generation Config fields populated', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
