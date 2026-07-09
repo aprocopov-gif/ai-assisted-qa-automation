@@ -1,8 +1,19 @@
 name: E2E Tests
 
 on:
+  pull_request:
   push:
   workflow_dispatch:
+    inputs:
+      suite:
+        description: Suite to run (on-demand; default is full regression)
+        required: true
+        default: regression
+        type: choice
+        options:
+          - smoke
+          - sanity
+          - regression
 
 jobs:
   e2e:
@@ -20,6 +31,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Resolve suite
+        id: suite
+        run: |
+          case "${{ github.event_name }}" in
+            pull_request)
+              echo "name=smoke" >> "$GITHUB_OUTPUT"
+              ;;
+            push)
+              echo "name=sanity" >> "$GITHUB_OUTPUT"
+              ;;
+            workflow_dispatch)
+              echo "name=${{ inputs.suite }}" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Unsupported event: ${{ github.event_name }}" >&2
+              exit 1
+              ;;
+          esac
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -32,13 +62,13 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright tests
-        run: npm test
+      - name: Run Playwright ${{ steps.suite.outputs.name }}
+        run: npm run test:${{ steps.suite.outputs.name }}
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ steps.suite.outputs.name }}-${{ github.run_id }}
           path: playwright-report/
           retention-days: 20

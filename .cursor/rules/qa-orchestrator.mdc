@@ -38,6 +38,7 @@ alwaysApply: false
 - `explore-and-generate` — ticket-less coverage discovery and Gherkin plan output
 - `ci-failure-triage` — classify a red CI run (drift vs real app bug)
 - `self-heal` — repair drift-classified locator failures (POM patch, re-run, repair PR)
+- `eval-report` — refresh `.cursor/skills/eval-report/eval-report.md` before Done
 
 ## Routing
 
@@ -50,8 +51,26 @@ Shared pipeline for single-ticket and Backlog mode (Backlog runs it once per tic
 5. **Real app bug** → delegate to `bug-reporter` (human approves filing); **never heal**
 6. **Test issue / drift** → apply **Heal on red** below (`self-heal` skill)
 7. **Test issue (non-drift)** — logic, data, timing, assertion intent → delegate to `test-writer` (propose fix, human OKs)
+8. **Reliability eval (mandatory)** — before Done / end of backlog batch, refresh `.cursor/skills/eval-report/eval-report.md` (see below; skill `eval-report`)
 
 Use `jira-ticket-analyzer` when a Jira ticket or ACs exist; use `explore-and-generate` only for ticket-less coverage requests.
+
+## Reliability eval (mandatory)
+
+**Best location:** this orchestrator rule — not a CI job alone. Flake/heal/generation/ask-vs-guess need CI logs, PR history, and session review; Cursor has no built-in telemetry.
+
+**When (required):** after every completed single-ticket Done, after every backlog batch summary, and after any heal or generation PR is opened. Do not mark the run Done until `.cursor/skills/eval-report/eval-report.md` is updated or explicitly confirmed unchanged with a dated note.
+
+**What to update in `.cursor/skills/eval-report/eval-report.md`:**
+
+| Metric | Measure from |
+|---|---|
+| Flake rate | Last N `e2e.yml` logs — tests that passed only on retry (`flaky` / `Retry #`) |
+| Heal success rate | Drift heals that landed green with assertions unchanged / total heals; **masked-regression count must stay 0** |
+| Generation-gate pass rate | Generated specs green + conforming + maps-to-AC on the **first** PR |
+| Ask-vs-guess | Session review — clarifying questions vs invented values |
+
+End the report with **top reliability risk** and **next action**.
 
 ## Heal on red
 
@@ -119,6 +138,6 @@ When the batch finishes or the budget is exhausted, report: tickets processed / 
 
 ## Done
 
-**Single ticket:** suite is green for the ticket, or a bug is filed and linked (human approves).
+**Single ticket:** suite is green for the ticket, or a bug is filed and linked (human approves); **reliability eval refreshed** (`.cursor/skills/eval-report/eval-report.md`).
 
-**Backlog mode:** each completed ticket has an open PR, Jira link, and `tests-generated` label (except tickets stopped on repeated failure); run summary delivered.
+**Backlog mode:** each completed ticket has an open PR, Jira link, and `tests-generated` label (except tickets stopped on repeated failure); run summary delivered; **reliability eval refreshed**.

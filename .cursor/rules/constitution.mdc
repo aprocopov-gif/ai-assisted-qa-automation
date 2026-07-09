@@ -1,0 +1,74 @@
+---
+description: Non-negotiable Playwright standards for this project — always on.
+alwaysApply: true
+---
+
+# Constitution
+
+Non-negotiables for this Playwright project. Details live in `playwright-conventions.mdc`.
+
+## MUST
+
+| Rule | Standard |
+|---|---|
+| Locators | Role/label first; `data-testid` only as escape hatch |
+| Waiting | Web-first assertions (`expect(locator)…`); never fixed sleeps |
+| Auth | `storageState` via setup project; no inline login per test |
+| Data | Unique per run (`Date.now()`, Faker); every test cleans up what it creates |
+| Tags | Exactly one of `@smoke` `@sanity` `@regression` `@api` `@e2e` `@destructive`; never on `describe` |
+| Destructive | `@destructive` only for shared/global mutations; serial + `afterEach`/`afterAll` revert |
+| Reliability eval | Refresh `.cursor/skills/eval-report/eval-report.md` before orchestrator Done |
+
+## SHOULD
+
+| Rule | Standard |
+|---|---|
+| Factories | Faker for generated test data |
+| Enums | Shared enums for repeated UI/API strings |
+| POM docs | JSDoc on public action methods in page objects |
+
+## WON'T
+
+| Rule | Why |
+|---|---|
+| XPath / CSS selectors | Coupled to markup; use user-facing locators |
+| `waitForTimeout` | Masks missing wait conditions |
+| Hardcoded secrets | Use `process.env` |
+| `any` | Type fixtures, POMs, and helpers properly |
+| Weakened assertions | Fix product, test intent, or file a bug — never delete/skip to go green |
+| Heal a real bug | Triage first; real defects → Jira, not locator patches |
+| Tags on `describe` | One tag per test only |
+
+## Agent governance
+
+Behavioral contract (not hook-enforced). **Audit, then edit** — explore enough to know the real path/enum/env/message before changing files.
+
+### Proposal (required before non-trivial edits)
+
+Emit this block, then wait for the confidence gate:
+
+```text
+Proposal
+- Scope: <what will change / not change>
+- Confidence: <1–10>
+- Rationale: <why this approach>
+- Unknowns: <gaps, assumptions, missing inputs>
+```
+
+### Confidence gate
+
+| Score | Action |
+|---|---|
+| **&lt; 5** | Do **not** proceed — ask for the missing input |
+| **5–7** | Proceed only with **explicit Unknowns** and **human approval** |
+| **≥ 8** | Proceed |
+
+### Never invent
+
+Do not invent a **path**, **enum**, **env var**, **credential**, or **UI/API message**. Ask the human or explore the repo/app instead.
+
+## Skills & agents
+
+**Skills:** `api-cleanup` — test teardown; `ci-failure-triage` — red-run diagnosis; `didaxis-program-deleter` — bulk program delete; `explore-and-generate` — find untested flows; `exploratory-charter` — feature+risk → charter/findings format; `jira-bug-reporter` — file defects; `jira-ticket-analyzer` — AC → Gherkin; `pom-conventions` — page object rules; `eval-report` — refresh flake/heal/generation/ask metrics; `self-heal` — fix drifted locators (test issues only).
+
+**Agents:** `triage` — classify CI failures; `bug-reporter` — Jira bug from confirmed defect; `test-writer` — plan → Playwright spec.

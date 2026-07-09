@@ -20,7 +20,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-014 (AC2 edge) — Leading/trailing whitespace in a new item is trimmed',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addTodo('   Buy milk   ');
 
@@ -35,7 +35,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-015 (AC2 edge) — Internal multi-space sequences are preserved verbatim',
-    { tag: '@low' },
+    { tag: '@regression' },
     async () => {
       const text = 'Buy   organic   milk';
       await app.addTodo(text);
@@ -50,7 +50,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-016 (AC2 edge) — Special characters and emoji are accepted as plain text (no XSS)',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async ({ page }) => {
       let alertFired = false;
       page.on('dialog', async (d) => {
@@ -80,7 +80,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-017 (AC2 edge) — Very long title (1000 chars) is preserved without breaking layout',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       const long = 'x'.repeat(1000);
       await app.addTodo(long);
@@ -107,7 +107,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-018 (AC2 edge) — Duplicate titles are stored as independent items',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addTodo('Buy milk');
       await app.addTodo('Buy milk');
@@ -129,7 +129,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-019 (AC2 boundary) — Adding 4 items in rapid succession produces exactly 4 entries',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async ({ page }) => {
       const titles = ['task 1', 'task 2', 'task 3', 'task 4'];
       await page.evaluate((items) => {
@@ -164,7 +164,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-020 (AC4 boundary) — Removing all 4 items one by one returns the app to empty state',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async ({ page }) => {
       const titles = ['Buy milk', 'Walk the dog', 'Write tests', 'Read book'];
       await app.addMany(titles);
@@ -198,7 +198,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-021 (AC3 edge) — Toggle-all marks every item finished; counter shows 0 left',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       const titles = ['Buy milk', 'Walk the dog', 'Write tests', 'Read book'];
       await app.addMany(titles);
@@ -219,7 +219,7 @@ test.describe('Edge cases', () => {
 
   test(
     'TC-022 (AC3 edge) — A finished item appears under /completed filter and is hidden under /active filter',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addMany(['Buy milk', 'Walk the dog']);
       await app.toggle('Buy milk');

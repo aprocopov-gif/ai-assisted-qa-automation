@@ -22,7 +22,7 @@ test.describe('Inline editing', () => {
 
   test(
     'TC-006 — Edit committed on Enter preserves id and completed state',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addTodo('Buy milk');
       const before = (await app.readStorage())![0];
@@ -41,7 +41,7 @@ test.describe('Inline editing', () => {
 
   test(
     'TC-007 — Edit committed on blur updates the item',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addTodo('Walk the dog');
       await app.editToValue('Walk the dog', 'Walk the dog (evening)', 'blur');
@@ -53,7 +53,7 @@ test.describe('Inline editing', () => {
 
   test(
     'TC-020 — Editing a todo to empty string deletes it',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addTodo('Buy milk');
       await app.editToValue('Buy milk', '', 'Enter');
@@ -67,7 +67,7 @@ test.describe('Inline editing', () => {
 
   test(
     'TC-021 — Edit cancelled by Escape reverts to original value',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addTodo('Buy milk');
       const before = await app.readStorage();
@@ -82,7 +82,7 @@ test.describe('Inline editing', () => {
 
   test(
     'TC-036 — Whitespace-only edit deletes the item',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addTodo('Buy milk');
       await app.editToValue('Buy milk', '   ', 'Enter');
@@ -105,7 +105,7 @@ test.describe('Filters', () => {
 
   test(
     'TC-011 — Active filter shows only active todos and updates URL',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async ({ page }) => {
       await app.addMany(['Buy milk', 'Walk the dog', 'Write tests']);
       await app.toggle('Buy milk');
@@ -122,7 +122,7 @@ test.describe('Filters', () => {
 
   test(
     'TC-012 — Completed filter shows only completed todos and updates URL',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async ({ page }) => {
       await app.addMany(['Buy milk', 'Walk the dog', 'Write tests']);
       await app.toggle('Buy milk');
@@ -139,7 +139,7 @@ test.describe('Filters', () => {
 
   test(
     'TC-013 — All filter restores the full list',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async ({ page }) => {
       await app.addMany(['Buy milk', 'Walk the dog', 'Write tests']);
       await app.toggle('Buy milk');
@@ -159,7 +159,7 @@ test.describe('Filters', () => {
 
   test(
     'TC-016 — Direct navigation to #/active filters correctly on first load',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.goto({
         path: '#/active',
@@ -177,7 +177,7 @@ test.describe('Filters', () => {
 
   test(
     'TC-017 — Direct navigation to #/completed filters correctly on first load',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.goto({
         path: '#/completed',
@@ -196,7 +196,7 @@ test.describe('Filters', () => {
 
   test(
     'TC-033 — Filter selection persists across browser back and forward',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async ({ page }) => {
       await app.addMany(['Buy milk', 'Walk the dog']);
       await app.toggle('Buy milk');
@@ -230,7 +230,7 @@ test.describe('Clear completed', () => {
 
   test(
     'TC-014 — Clear completed removes only completed todos',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addMany(['Buy milk', 'Walk the dog', 'Write tests']);
       await app.toggle('Buy milk');
@@ -254,7 +254,7 @@ test.describe('Clear completed', () => {
 
   test(
     'TC-022 — Clear completed button is hidden when no completed items exist',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addMany(['a', 'b']);
       await expect(app.clearCompleted).toBeHidden();
@@ -274,7 +274,7 @@ test.describe('Toggle-all state machine', () => {
 
   test(
     'TC-010 — Toggle-all click a second time restores all items to active',
-    { tag: '@high' },
+    { tag: '@smoke' },
     async () => {
       await app.addMany(['a', 'b', 'c']);
       await app.toggleAll.click();
@@ -290,7 +290,7 @@ test.describe('Toggle-all state machine', () => {
 
   test(
     'TC-032 — Toggle-all reflects mixed completed state correctly',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addMany(['a', 'b', 'c']);
       await app.toggle('a');
@@ -308,7 +308,7 @@ test.describe('Toggle-all state machine', () => {
 
   test(
     'TC-034 — Toggle-all checked state does not leak after list is emptied and refilled',
-    { tag: '@low' },
+    { tag: '@regression' },
     async () => {
       await app.addTodo('Buy milk');
       await app.toggleAll.click();
@@ -336,7 +336,7 @@ test.describe('Routing edge cases', () => {
 
   test(
     'TC-024 — Invalid hash route falls through to All without crashing',
-    { tag: '@low' },
+    { tag: '@regression' },
     async ({ page }) => {
       const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(e.message));
@@ -354,7 +354,7 @@ test.describe('Routing edge cases', () => {
 
   test(
     'TC-025 — Direct navigation to #/completed on an empty list shows empty state',
-    { tag: '@low' },
+    { tag: '@regression' },
     async () => {
       await app.goto({ path: '#/completed' });
 
@@ -378,7 +378,7 @@ test.describe('Persistence and storage', () => {
 
   test(
     'TC-035 — Corrupted localStorage does not crash the app',
-    { tag: '@low' },
+    { tag: '@regression' },
     async ({ page }) => {
       test.fail(
         true,
@@ -402,7 +402,7 @@ test.describe('Persistence and storage', () => {
 
   test(
     'TC-037 — Two tabs in the same context share localStorage on reload',
-    { tag: '@low' },
+    { tag: '@regression' },
     async ({ context, page }) => {
       await app.addTodo('Task A');
 
@@ -432,7 +432,7 @@ test.describe('Scale', () => {
 
   test(
     'TC-031 — Bulk insertion of 50 items remains responsive',
-    { tag: '@low' },
+    { tag: '@regression' },
     async () => {
       test.slow();
       const titles = Array.from({ length: 50 }, (_, i) => `task ${i + 1}`);
@@ -464,7 +464,7 @@ test.describe('Responsive layout at 375×667', () => {
 
   test(
     'TC-038 — All controls are visible and usable on a mobile viewport',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async () => {
       await app.addMany(['a', 'b', 'c']);
       await app.toggle('a');
@@ -498,7 +498,7 @@ test.describe('Accessibility', () => {
 
   test(
     'TC-039 — Keyboard: input is focusable and submits on Enter',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async ({ page }) => {
       await app.newTodo.focus();
       await expect(app.newTodo).toBeFocused();
@@ -524,7 +524,7 @@ test.describe('Console health', () => {
 
   test(
     'TC-040 — No unexpected console errors during a representative session',
-    { tag: '@medium' },
+    { tag: '@sanity' },
     async ({ page }) => {
       const ignored = [/lockdown-install\.js/, /\bSES\b/];
       const errors: string[] = [];
