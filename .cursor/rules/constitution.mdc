@@ -17,7 +17,7 @@ Non-negotiables for this Playwright project. Details live in `playwright-convent
 | Data | Unique per run (`Date.now()`, Faker); every test cleans up what it creates |
 | Tags | Exactly one of `@smoke` `@sanity` `@regression` `@api` `@e2e` `@destructive`; never on `describe` |
 | Destructive | `@destructive` only for shared/global mutations; serial + `afterEach`/`afterAll` revert |
-| Reliability eval | Refresh `.cursor/skills/eval-report/eval-report.md` before orchestrator Done |
+| Reliability eval | Refresh **Current report** in `.cursor/skills/eval-report/SKILL.md` before orchestrator Done |
 
 ## SHOULD
 
