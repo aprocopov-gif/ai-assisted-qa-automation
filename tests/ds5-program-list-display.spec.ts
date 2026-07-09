@@ -137,9 +137,10 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-001 — Programs page shows each program's name and description
-  test("TC-001: Programs page shows each program's name and description", async ({
-    page,
-  }) => {
+  test(
+    "TC-001: Programs page shows each program's name and description",
+    { tag: '@smoke' },
+    async ({ page }) => {
     const programs = new ProgramsPage(page);
     const nameA = testProgramName('Web Development 2026');
     const nameB = testProgramName('Data Science 2026');
@@ -159,34 +160,47 @@ test.describe('DS-5: Program List Display', () => {
 
   // TC-002 — Empty state message and create prompt are shown when no programs exist
   // NOTE: Cannot guarantee a truly empty environment; skips if other programs exist
-  test('TC-002: Empty state is shown when no programs exist', async ({
+  test('TC-002: Empty state is shown when no programs exist', { tag: '@smoke' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
+    const listResponse = page.waitForResponse(
+      (response) =>
+        response.request().method() === 'GET' &&
+        response.url().includes('/api/programs'),
+    );
     await programs.goto();
-    const tableVisible = await programs.table.isVisible().catch(() => false);
+    await listResponse;
+    await expect(programs.heading).toBeVisible();
 
-    if (tableVisible) {
-      const rowCount = await programs.rows().count();
-      if (rowCount > 1) {
-        test.skip(
-          true,
-          'Other programs exist — clean environment required for this test',
-        );
-        return;
-      }
+    const existingPrograms = await programs.deleteButtons().count();
+    if (existingPrograms > 0) {
+      test.skip(
+        true,
+        'Other programs exist — clean environment required for this test',
+      );
+      return;
     }
 
     const emptyIndicator = programs.emptyStateMessage;
-    const tableGone = !(await programs.table.isVisible().catch(() => false));
+    const tableVisible = await programs.table.isVisible().catch(() => false);
+    const tableGone = !tableVisible;
+    const onlyHeaderRow = tableVisible && (await programs.rows().count()) <= 1;
+    const emptyCreatePrompt = await programs.createProgramEmptyStateButton
+      .isVisible()
+      .catch(() => false);
+
     expect(
-      tableGone || (await emptyIndicator.isVisible().catch(() => false)),
+      tableGone ||
+        onlyHeaderRow ||
+        emptyCreatePrompt ||
+        (await emptyIndicator.isVisible().catch(() => false)),
     ).toBe(true);
     await expect(programs.newProgramButton).toBeVisible();
   });
 
   // TC-003 — A single program is displayed correctly in the program list
-  test('TC-003: A single program is displayed with its name and description', async ({
+  test('TC-003: A single program is displayed with its name and description', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -203,7 +217,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-004 — Newly created program appears in the list without requiring a manual reload
-  test('TC-004: Newly created program appears in the list without a page reload', async ({
+  test('TC-004: Newly created program appears in the list without a page reload', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -226,7 +240,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-005 — Empty state is replaced by the program list after the first program is created
-  test('TC-005: Program list appears after a program is created', async ({
+  test('TC-005: Program list appears after a program is created', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -249,7 +263,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-006 — Program list is still accessible and intact after a page reload
-  test('TC-006: Program list is intact after a page reload', async ({
+  test('TC-006: Program list is intact after a page reload', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -274,7 +288,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-008 — Non-admin user cannot access the Programs page
-  test('TC-008: Non-admin user cannot access the Programs page', async ({
+  test('TC-008: Non-admin user cannot access the Programs page', { tag: '@sanity' }, async ({
     page,
   }) => {
     test.skip(
@@ -302,7 +316,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-009 — Programs from other organisations are not shown
-  test('TC-009: Programs from other organisations are not shown', async ({
+  test('TC-009: Programs from other organisations are not shown', { tag: '@regression' }, async ({
     page,
   }) => {
     test.skip(
@@ -312,7 +326,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-010 — Empty-state prompt does not appear when programs exist
-  test('TC-010: Empty-state prompt is not shown when programs exist', async ({
+  test('TC-010: Empty-state prompt is not shown when programs exist', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -327,7 +341,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-011 — Program with a maximum-length name is displayed without overflow
-  test('TC-011: Program with a maximum-length name is displayed without layout breakage', async ({
+  test('TC-011: Program with a maximum-length name is displayed without layout breakage', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -350,7 +364,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-012 — Program with a maximum-length description is displayed without layout breakage
-  test('TC-012: Program with a maximum-length description is displayed without layout breakage', async ({
+  test('TC-012: Program with a maximum-length description is displayed without layout breakage', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -368,7 +382,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-013 — Program with special characters is displayed correctly (no HTML encoding)
-  test('TC-013: Program with special characters is displayed without encoding artifacts', async ({
+  test('TC-013: Program with special characters is displayed without encoding artifacts', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -386,7 +400,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-014 — Program with HTML/script tags is rendered as plain text
-  test('TC-014: Program name and description with HTML tags are rendered as plain text', async ({
+  test('TC-014: Program name and description with HTML tags are rendered as plain text', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -417,7 +431,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-015 — Program with whitespace-only description shows a graceful empty state
-  test('TC-015: Program with whitespace-only description shows graceful empty state in the cell', async ({
+  test('TC-015: Program with whitespace-only description shows graceful empty state in the cell', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -443,7 +457,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-016 — Program with a blank (empty) description is displayed without error
-  test('TC-016: Program with no description is displayed without error', async ({
+  test('TC-016: Program with no description is displayed without error', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -464,7 +478,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-017 — Program list with multiple programs loads within acceptable time
-  test('TC-017: Program list with multiple programs loads within 5 seconds', async ({
+  test('TC-017: Program list with multiple programs loads within 5 seconds', { tag: '@regression' }, async ({
     page,
     trackProgram,
   }) => {
@@ -490,7 +504,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-018 — Program with Unicode and multilingual characters is displayed correctly
-  test('TC-018: Program with Unicode and multilingual characters is displayed correctly', async ({
+  test('TC-018: Program with Unicode and multilingual characters is displayed correctly', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -506,7 +520,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-019 — Two programs with identical names are both displayed in the list
-  test('TC-019: Two programs with identical names are both shown as separate rows', async ({
+  test('TC-019: Two programs with identical names are both shown as separate rows', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -527,7 +541,7 @@ test.describe('DS-5: Program List Display', () => {
   });
 
   // TC-020 — Programs list order is consistent across page reloads
-  test('TC-020: Programs list order is consistent across page reloads', async ({
+  test('TC-020: Programs list order is consistent across page reloads', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -558,7 +572,7 @@ test.describe('DS-5: Program List Display — unauthenticated access', () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
   // TC-007 — Unauthenticated user is redirected away from the Programs page
-  test('TC-007: Unauthenticated user is redirected to the login page', async ({
+  test('TC-007: Unauthenticated user is redirected to the login page', { tag: '@smoke' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);

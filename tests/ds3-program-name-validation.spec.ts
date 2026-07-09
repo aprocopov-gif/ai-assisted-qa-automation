@@ -70,7 +70,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-001 — Program name with special characters is accepted and rendered correctly
-  test('TC-001: Program name with special characters is accepted and rendered correctly', async ({
+  test('TC-001: Program name with special characters is accepted and rendered correctly', { tag: '@smoke' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -84,7 +84,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-002 — Program name with alphanumeric characters and spaces is accepted
-  test('TC-002: Program name with alphanumeric characters and spaces is accepted', async ({
+  test('TC-002: Program name with alphanumeric characters and spaces is accepted', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programName = testProgramName('Web Development 2026');
@@ -93,7 +93,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-003 — Program name with leading and trailing whitespace is trimmed and saved
-  test('TC-003: Program name with leading/trailing whitespace is trimmed and saved', async ({
+  test('TC-003: Program name with leading/trailing whitespace is trimmed and saved', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -111,7 +111,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-004 — A name previously used by a deleted program can be reused
-  test('TC-004: A name previously used by a deleted program can be reused', async ({
+  test('TC-004: A name previously used by a deleted program can be reused', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -138,7 +138,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-005 — Program name consisting only of whitespace is rejected
-  test('TC-005: Program name consisting only of whitespace is rejected', async ({
+  test('TC-005: Program name consisting only of whitespace is rejected', { tag: '@smoke' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -149,7 +149,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-006 — Empty Program Name field prevents form submission
-  test('TC-006: Empty Program Name field prevents form submission', async ({
+  test('TC-006: Empty Program Name field prevents form submission', { tag: '@smoke' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -160,9 +160,7 @@ test.describe('DS-3: Program Name Validation', () => {
 
   // TC-007 — Duplicate program name (exact match) is rejected with an error message
   // test.fail() documents a known app defect: duplicate creation succeeds instead of being rejected
-  test.fail(
-    'TC-007: Duplicate program name is rejected with an error message',
-    async ({ page }) => {
+  test.fail('TC-007: Duplicate program name is rejected with an error message', { tag: '@smoke' }, async ({ page }) => {
       const programName = testProgramName('Duplicate Test');
       const description = testDescription('Attempted duplicate program');
       const programs = new ProgramsPage(page);
@@ -188,9 +186,7 @@ test.describe('DS-3: Program Name Validation', () => {
 
   // TC-008 — Duplicate-name error message is specific and actionable
   // test.fail() documents a known app defect: no duplicate error message is shown
-  test.fail(
-    'TC-008: Duplicate-name error message is specific and actionable',
-    async ({ page }) => {
+  test.fail('TC-008: Duplicate-name error message is specific and actionable', { tag: '@regression' }, async ({ page }) => {
       const programName = testProgramName('Duplicate Error Test');
       const programs = new ProgramsPage(page);
 
@@ -211,7 +207,7 @@ test.describe('DS-3: Program Name Validation', () => {
   );
 
   // TC-009 — Non-admin user cannot access the program creation form
-  test('TC-009: Non-admin user cannot access the program creation form', async ({
+  test('TC-009: Non-admin user cannot access the program creation form', { tag: '@sanity' }, async ({
     page,
   }) => {
     test.skip(
@@ -234,7 +230,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-010 — Program name consisting only of tab characters is rejected
-  test('TC-010: Program name consisting only of tab characters is rejected', async ({
+  test('TC-010: Program name consisting only of tab characters is rejected', { tag: '@regression' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -246,7 +242,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-011 — Program name with a mix of spaces and tabs is rejected
-  test('TC-011: Program name with a mix of spaces and tabs is rejected', async ({
+  test('TC-011: Program name with a mix of spaces and tabs is rejected', { tag: '@regression' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -258,7 +254,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-012 — Single-character program name is accepted
-  test('TC-012: Single-character program name is accepted', async ({
+  test('TC-012: Single-character program name is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const programName = `${DATA_PREFIX}A${Date.now()}`;
@@ -267,7 +263,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-013 — Program name at the maximum allowed length is accepted
-  test('TC-013: Program name at maximum allowed length is accepted', async ({
+  test('TC-013: Program name at maximum allowed length is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -285,9 +281,7 @@ test.describe('DS-3: Program Name Validation', () => {
 
   // TC-014 — Program name exceeding maximum allowed length is rejected or truncated
   // test.fail() documents a known app defect: the field accepts >255 chars without truncation or error
-  test.fail(
-    'TC-014: Program name exceeding maximum allowed length is rejected or truncated',
-    async ({ page }) => {
+  test.fail('TC-014: Program name exceeding maximum allowed length is rejected or truncated', { tag: '@regression' }, async ({ page }) => {
       const overLimitName = DATA_PREFIX + 'A'.repeat(256 - DATA_PREFIX.length);
       const { modal } = await openNewProgramModal(page);
       const nameField = modal.programNameInput;
@@ -302,7 +296,7 @@ test.describe('DS-3: Program Name Validation', () => {
   );
 
   // TC-015 — Program name with HTML/script tags is stored and displayed as plain text
-  test('TC-015: Program name with HTML/script tags does not execute', async ({
+  test('TC-015: Program name with HTML/script tags does not execute', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -330,7 +324,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-016 — Duplicate check behavior is consistent for case-variant names
-  test('TC-016: Duplicate check is consistent for case-variant names', async ({
+  test('TC-016: Duplicate check is consistent for case-variant names', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -360,7 +354,7 @@ test.describe('DS-3: Program Name Validation', () => {
   });
 
   // TC-017 — Program name with Unicode and multilingual characters is accepted
-  test('TC-017: Program name with Unicode and multilingual characters is accepted', async ({
+  test('TC-017: Program name with Unicode and multilingual characters is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -375,9 +369,7 @@ test.describe('DS-3: Program Name Validation', () => {
 
   // TC-018 — Duplicate name validation is enforced server-side after a page reload
   // test.fail() documents a known app defect: duplicate passes even after reload (no server-side check)
-  test.fail(
-    'TC-018: Duplicate name validation is enforced after a page reload',
-    async ({ page }) => {
+  test.fail('TC-018: Duplicate name validation is enforced after a page reload', { tag: '@regression' }, async ({ page }) => {
       const programName = testProgramName('Reload Dup Test');
       const programs = new ProgramsPage(page);
       await createProgram(page, programName, testDescription('Original program'));
@@ -401,7 +393,7 @@ test.describe('DS-3: Program Name Validation', () => {
   );
 
   // TC-019 — Program name consisting only of numeric characters is accepted
-  test('TC-019: Program name consisting only of numeric characters is accepted', async ({
+  test('TC-019: Program name consisting only of numeric characters is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const programName = `${DATA_PREFIX}2026${Date.now()}`;
@@ -411,9 +403,7 @@ test.describe('DS-3: Program Name Validation', () => {
 
   // TC-020 — Rapid double-click on Create does not produce duplicate programs
   // test.fail() documents a known app defect: double-clicking Create submits the form twice
-  test.fail(
-    'TC-020: Rapid double-click on Create does not produce duplicate programs',
-    async ({ page }) => {
+  test.fail('TC-020: Rapid double-click on Create does not produce duplicate programs', { tag: '@regression' }, async ({ page }) => {
       const programs = new ProgramsPage(page);
       const programName = testProgramName('Unique Program Name 001');
       const { modal } = await openNewProgramModal(page);

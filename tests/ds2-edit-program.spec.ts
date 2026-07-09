@@ -87,7 +87,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-001 — Edit form opens pre-populated with the program's current data
-  test('TC-001: Edit form opens pre-populated with current program data', async ({
+  test('TC-001: Edit form opens pre-populated with current program data', { tag: '@smoke' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');
@@ -101,7 +101,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-002 — Admin successfully updates the program name
-  test('TC-002: Admin successfully updates the program name', async ({
+  test('TC-002: Admin successfully updates the program name', { tag: '@smoke' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Web Development');
@@ -122,7 +122,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-003 — Program list reflects the updated name immediately without a page reload
-  test('TC-003: Program list reflects updated name without page reload', async ({
+  test('TC-003: Program list reflects updated name without page reload', { tag: '@sanity' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Prog-A');
@@ -140,7 +140,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-004 — Editing only the Description preserves the Program Name
-  test('TC-004: Editing only Description preserves Program Name', async ({
+  test('TC-004: Editing only Description preserves Program Name', { tag: '@smoke' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');
@@ -164,7 +164,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-005 — Editing only the Name preserves the Description
-  test('TC-005: Editing only Name preserves Description', async ({ page }) => {
+  test('TC-005: Editing only Name preserves Description', { tag: '@sanity' }, async ({ page }) => {
     const originalName = testProgramName('Web Development');
     const updatedName = `${originalName} - Updated`;
     const description = testDescription('Full-stack web development program');
@@ -183,7 +183,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-006 — Admin successfully updates both Name and Description simultaneously
-  test('TC-006: Admin successfully updates both Name and Description', async ({
+  test('TC-006: Admin successfully updates both Name and Description', { tag: '@sanity' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Web Development');
@@ -210,7 +210,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-007 — Save button is disabled when Program Name is cleared
-  test('TC-007: Save button is disabled when Program Name is cleared', async ({
+  test('TC-007: Save button is disabled when Program Name is cleared', { tag: '@smoke' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');
@@ -223,7 +223,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-008 — Cancelling the edit form does not apply any changes
-  test('TC-008: Cancelling the edit form does not apply changes', async ({
+  test('TC-008: Cancelling the edit form does not apply changes', { tag: '@sanity' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');
@@ -241,7 +241,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-009 — Program Name containing only whitespace is rejected
-  test('TC-009: Program Name containing only whitespace is rejected', async ({
+  test('TC-009: Program Name containing only whitespace is rejected', { tag: '@sanity' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');
@@ -254,7 +254,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-010 — Non-admin user cannot access the edit icon
-  test('TC-010: Non-admin user cannot access the edit icon', async ({
+  test('TC-010: Non-admin user cannot access the edit icon', { tag: '@sanity' }, async ({
     page,
   }) => {
     test.skip(
@@ -277,7 +277,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-011 — Navigating away mid-edit without saving discards changes
-  test('TC-011: Navigating away without saving discards changes', async ({
+  test('TC-011: Navigating away without saving discards changes', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');
@@ -293,7 +293,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-012 — Program Name at maximum allowed length is accepted
-  test('TC-012: Program Name at maximum allowed length is accepted', async ({
+  test('TC-012: Program Name at maximum allowed length is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Web Development');
@@ -315,7 +315,7 @@ test.describe('DS-2: Edit Program', () => {
   // TC-013 — Program Name exceeding maximum allowed length is rejected
   // Skipped: known app defect tracked in Jira DS-42 — names > 255 chars are neither
   // truncated nor blocked on Save. Re-enable once DS-42 is fixed.
-  test.skip('TC-013: Program Name exceeding maximum length is rejected', async ({
+  test.skip('TC-013: Program Name exceeding maximum length is rejected', { tag: '@regression' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Web Development');
@@ -333,7 +333,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-014 — Program Name with special characters is saved and rendered correctly
-  test('TC-014: Program Name with special characters is saved and rendered correctly', async ({
+  test('TC-014: Program Name with special characters is saved and rendered correctly', { tag: '@regression' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Web Development');
@@ -349,7 +349,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-015 — Program Name with HTML/script tags does not execute
-  test('TC-015: Program Name with HTML/script tags does not execute', async ({
+  test('TC-015: Program Name with HTML/script tags does not execute', { tag: '@regression' }, async ({
     page,
   }) => {
     let alertFired = false;
@@ -373,7 +373,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-016 — Editing to a name that duplicates an existing program is handled
-  test('TC-016: Editing to a duplicate program name is handled', async ({
+  test('TC-016: Editing to a duplicate program name is handled', { tag: '@regression' }, async ({
     page,
   }) => {
     const nameA = testProgramName('Web Development');
@@ -396,7 +396,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-017 — Program Name with leading/trailing whitespace is trimmed on save
-  test('TC-017: Program Name with leading/trailing whitespace is trimmed on save', async ({
+  test('TC-017: Program Name with leading/trailing whitespace is trimmed on save', { tag: '@regression' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Web Development');
@@ -412,7 +412,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-018 — Description field at maximum allowed length is accepted
-  test('TC-018: Description field at maximum allowed length is accepted', async ({
+  test('TC-018: Description field at maximum allowed length is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');
@@ -432,7 +432,7 @@ test.describe('DS-2: Edit Program', () => {
   // TC-019 — Rapid double-click on Save does not submit the form twice
   // Skipped: app has no double-submit protection — a rapid double-click sends 2 PATCH
   // requests instead of <=1. Re-enable once the Save button is disabled/debounced during submit.
-  test.skip('TC-019: Rapid double-click on Save does not submit the form twice', async ({
+  test.skip('TC-019: Rapid double-click on Save does not submit the form twice', { tag: '@regression' }, async ({
     page,
   }) => {
     const originalName = testProgramName('Web Development');
@@ -467,7 +467,7 @@ test.describe('DS-2: Edit Program', () => {
   });
 
   // TC-020 — Server error during save displays an appropriate error message
-  test('TC-020: Server error during save displays an appropriate error message', async ({
+  test('TC-020: Server error during save displays an appropriate error message', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Web Development');

@@ -70,7 +70,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-001 — Program creation form is accessible to admin
-  test('TC-001: New Program modal contains required fields and Create button', async ({
+  test('TC-001: New Program modal contains required fields and Create button', { tag: '@smoke' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -81,7 +81,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-002 — Admin successfully creates a program with all fields populated
-  test('TC-002: Admin successfully creates a program with all fields populated', async ({
+  test('TC-002: Admin successfully creates a program with all fields populated', { tag: '@smoke' }, async ({
     page,
   }) => {
     const programName = testProgramName('Web Development');
@@ -91,7 +91,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-003 — Admin successfully creates a program with only the required field
-  test('TC-003: Admin successfully creates a program with only the required field', async ({
+  test('TC-003: Admin successfully creates a program with only the required field', { tag: '@smoke' }, async ({
     page,
   }) => {
     const programName = testProgramName('Data Science');
@@ -100,7 +100,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-004 — Create button is enabled when Program Name is filled
-  test('TC-004: Create button is enabled when Program Name is filled', async ({
+  test('TC-004: Create button is enabled when Program Name is filled', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programName = testProgramName('Computer Science');
@@ -112,7 +112,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-005 — Create button is disabled when Program Name is empty
-  test('TC-005: Create button is disabled when Program Name is empty', async ({
+  test('TC-005: Create button is disabled when Program Name is empty', { tag: '@smoke' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -121,7 +121,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-006 — Create button remains disabled when only Description is filled
-  test('TC-006: Create button remains disabled when only Description is filled', async ({
+  test('TC-006: Create button remains disabled when only Description is filled', { tag: '@sanity' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -131,7 +131,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-007 — Program Name containing only whitespace is rejected
-  test('TC-007: Program Name containing only whitespace is rejected', async ({
+  test('TC-007: Program Name containing only whitespace is rejected', { tag: '@sanity' }, async ({
     page,
   }) => {
     const { modal } = await openNewProgramModal(page);
@@ -140,7 +140,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-008 — Non-admin user cannot access the program creation form
-  test('TC-008: Non-admin user cannot access the program creation form', async ({
+  test('TC-008: Non-admin user cannot access the program creation form', { tag: '@sanity' }, async ({
     page,
   }) => {
     test.skip(
@@ -162,7 +162,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-009 — Cancelling the form does not create a program
-  test('TC-009: Cancelling the form does not create a program', async ({
+  test('TC-009: Cancelling the form does not create a program', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programName = testProgramName('Cancelled Program');
@@ -177,7 +177,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-010 — Program Name at maximum allowed length is accepted
-  test('TC-010: Program Name at maximum allowed length is accepted', async ({
+  test('TC-010: Program Name at maximum allowed length is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const suffix = String(Date.now());
@@ -193,9 +193,7 @@ test.describe('DS-1: Create Program', () => {
 
   // TC-011 — Program Name exceeding maximum length is rejected
   // test.fail() documents a known app defect: the field accepts >255 chars without truncation or error
-  test.fail(
-    'TC-011: Program Name exceeding maximum length is rejected',
-    async ({ page }) => {
+  test.fail('TC-011: Program Name exceeding maximum length is rejected', { tag: '@regression' }, async ({ page }) => {
       const overLimitName = 'A'.repeat(256);
 
       const { modal } = await openNewProgramModal(page);
@@ -212,7 +210,7 @@ test.describe('DS-1: Create Program', () => {
   );
 
   // TC-012 — Program Name with special characters is handled correctly
-  test('TC-012: Program Name with special characters is handled correctly', async ({
+  test('TC-012: Program Name with special characters is handled correctly', { tag: '@regression' }, async ({
     page,
   }) => {
     const programName = `${DATA_PREFIX}Web Dev & Design: ${Date.now()} (Part 1)`;
@@ -221,7 +219,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-013 — Program Name with HTML/script tags does not execute
-  test('TC-013: Program Name with HTML/script tags does not execute', async ({
+  test('TC-013: Program Name with HTML/script tags does not execute', { tag: '@regression' }, async ({
     page,
   }) => {
     let alertFired = false;
@@ -242,7 +240,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-014 — Duplicate program name is handled
-  test('TC-014: Duplicate program name is handled', async ({
+  test('TC-014: Duplicate program name is handled', { tag: '@regression' }, async ({
     page,
   }) => {
     const programName = testProgramName('Duplicate Test');
@@ -265,7 +263,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-015 — Description field at maximum allowed length is accepted
-  test('TC-015: Description field at maximum allowed length is accepted', async ({
+  test('TC-015: Description field at maximum allowed length is accepted', { tag: '@regression' }, async ({
     page,
   }) => {
     const programName = testProgramName('New Program');
@@ -277,7 +275,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-016 — Newly created program appears in the list without a page refresh
-  test('TC-016: Newly created program appears in the list without a page refresh', async ({
+  test('TC-016: Newly created program appears in the list without a page refresh', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programName = testProgramName('Machine Learning');
@@ -286,7 +284,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-017 — Program Name with leading/trailing whitespace is trimmed
-  test('TC-017: Program Name with leading/trailing whitespace is trimmed', async ({
+  test('TC-017: Program Name with leading/trailing whitespace is trimmed', { tag: '@regression' }, async ({
     page,
   }) => {
     const baseName = testProgramName('Web Development');
@@ -301,7 +299,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-018 — Escape dismisses the form without creating a program
-  test('TC-018: Escape dismisses the New Program modal without creating a program', async ({
+  test('TC-018: Escape dismisses the New Program modal without creating a program', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programName = testProgramName('Escape Cancel');
@@ -317,7 +315,7 @@ test.describe('DS-1: Create Program', () => {
   });
 
   // TC-019 — Reopening the modal after Escape retains previously entered values
-  test('TC-019: Reopening the modal after Escape retains previously entered values', async ({
+  test('TC-019: Reopening the modal after Escape retains previously entered values', { tag: '@regression' }, async ({
     page,
   }) => {
     const draftName = testProgramName('Escape Draft');

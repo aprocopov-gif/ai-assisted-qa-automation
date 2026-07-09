@@ -55,9 +55,7 @@ test.describe('Programs accessibility', () => {
 
   // TC-A11Y-001 — Programs list page passes automated WCAG scan
   // test.fail() documents known demo-app contrast issues in sidebar and page subtitle
-  test.fail(
-    'TC-A11Y-001: Programs list page has no WCAG 2.x violations',
-    async ({ page }) => {
+  test.fail('TC-A11Y-001: Programs list page has no WCAG 2.x violations', { tag: '@regression' }, async ({ page }) => {
       const programs = new ProgramsPage(page);
       await programs.goto();
       await expect(programs.heading).toBeVisible();
@@ -71,7 +69,7 @@ test.describe('Programs accessibility', () => {
   );
 
   // TC-A11Y-002 — New Program flow is keyboard operable
-  test('TC-A11Y-002: New Program modal opens and submits via keyboard', async ({
+  test('TC-A11Y-002: New Program modal opens and submits via keyboard', { tag: '@smoke' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -99,7 +97,7 @@ test.describe('Programs accessibility', () => {
   });
 
   // TC-A11Y-003 — Row actions expose accessible names screen readers can announce
-  test('TC-A11Y-003: Program row Edit and Delete buttons have accessible names', async ({
+  test('TC-A11Y-003: Program row Edit and Delete buttons have accessible names', { tag: '@sanity' }, async ({
     page,
   }) => {
     const programs = new ProgramsPage(page);
@@ -120,9 +118,7 @@ test.describe('Programs accessibility', () => {
 
   // TC-A11Y-004 — Open New Program modal passes automated WCAG scan
   // test.fail() documents known demo-app bug: modal close button lacks an accessible name
-  test.fail(
-    'TC-A11Y-004: New Program modal has no WCAG 2.x violations',
-    async ({ page }) => {
+  test.fail('TC-A11Y-004: New Program modal has no WCAG 2.x violations', { tag: '@regression' }, async ({ page }) => {
       const programs = new ProgramsPage(page);
       await programs.goto();
       await programs.openNewProgram();

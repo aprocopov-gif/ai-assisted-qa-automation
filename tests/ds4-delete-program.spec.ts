@@ -82,7 +82,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-001 — Confirmed deletion removes the program from the program list
-  test('TC-001: Confirmed deletion removes the program from the list', async ({
+  test('TC-001: Confirmed deletion removes the program from the list', { tag: '@smoke' }, async ({
     page,
   }) => {
     const name = testProgramName('Delete Me');
@@ -96,7 +96,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-002 — Cancelling the confirmation dialog leaves the program intact
-  test('TC-002: Cancelling the confirmation dialog leaves the program intact', async ({
+  test('TC-002: Cancelling the confirmation dialog leaves the program intact', { tag: '@smoke' }, async ({
     page,
   }) => {
     const name = testProgramName('Keep Me');
@@ -110,7 +110,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-003 — Deleting one program does not affect other programs in the list
-  test('TC-003: Deleting one program does not affect other programs', async ({
+  test('TC-003: Deleting one program does not affect other programs', { tag: '@sanity' }, async ({
     page,
   }) => {
     const nameA = testProgramName('Delete Target');
@@ -125,7 +125,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-004 — Deleted program name becomes available for a new program
-  test('TC-004: Deleted program name can be reused for a new program', async ({
+  test('TC-004: Deleted program name can be reused for a new program', { tag: '@sanity' }, async ({
     page,
   }) => {
     const name = testProgramName('Reusable Name');
@@ -144,7 +144,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-005 — Confirmation dialog displays the correct program name
-  test('TC-005: Confirmation dialog displays the correct program name', async ({
+  test('TC-005: Confirmation dialog displays the correct program name', { tag: '@smoke' }, async ({
     page,
   }) => {
     const name = testProgramName('Name Check');
@@ -163,7 +163,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-006 — Deletion is persisted after a page reload
-  test('TC-006: Deletion is persisted after a page reload', async ({
+  test('TC-006: Deletion is persisted after a page reload', { tag: '@sanity' }, async ({
     page,
   }) => {
     const name = testProgramName('Persist Test');
@@ -177,7 +177,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-007 — Non-admin user does not see the delete icon
-  test('TC-007: Non-admin user does not see the delete icon', async ({
+  test('TC-007: Non-admin user does not see the delete icon', { tag: '@sanity' }, async ({
     page,
   }) => {
     test.skip(
@@ -200,7 +200,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-008 — Dismissing the confirmation dialog (equivalent of X button) leaves the program intact
-  test('TC-008: Dismissing the confirmation dialog leaves the program intact', async ({
+  test('TC-008: Dismissing the confirmation dialog leaves the program intact', { tag: '@sanity' }, async ({
     page,
   }) => {
     const name = testProgramName('Dismiss Test');
@@ -214,7 +214,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-009 — Network failure during deletion shows an error and leaves the program intact
-  test('TC-009: Network failure during confirmation shows an error and program remains', async ({
+  test('TC-009: Network failure during confirmation shows an error and program remains', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Network Fail');
@@ -240,7 +240,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-010 — Direct API call without admin credentials is rejected
-  test('TC-010: Direct API call without admin credentials is rejected', async ({
+  test('TC-010: Direct API call without admin credentials is rejected', { tag: '@regression' }, async ({
     page,
   }) => {
     test.skip(
@@ -270,7 +270,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-011 — Clicking Cancel (dismiss) multiple times does not accumulate side effects
-  test('TC-011: Dismissing the dialog multiple times does not affect the program', async ({
+  test('TC-011: Dismissing the dialog multiple times does not affect the program', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Multi Cancel');
@@ -286,7 +286,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-012 — Deleting the only program in the list shows an empty-state message
-  test('TC-012: Deleting a program removes it from the list; empty-state when no programs remain', async ({
+  test('TC-012: Deleting a program removes it from the list; empty-state when no programs remain', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Solo Program');
@@ -314,7 +314,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-013 — Program with special characters in its name can be deleted
-  test('TC-013: Program with special characters in its name can be deleted', async ({
+  test('TC-013: Program with special characters in its name can be deleted', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = `${DATA_PREFIX}Informatique & IA - Niveau 2 ${Date.now()}`;
@@ -334,7 +334,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-014 — Program with a maximum-length name can be deleted
-  test('TC-014: Program with a maximum-length name can be deleted', async ({
+  test('TC-014: Program with a maximum-length name can be deleted', { tag: '@regression' }, async ({
     page,
   }) => {
     const suffix = String(Date.now());
@@ -353,7 +353,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-015 — Dismissing the dialog (equivalent of Escape) cancels deletion
-  test('TC-015: Dismissing the dialog (Escape equivalent) cancels deletion', async ({
+  test('TC-015: Dismissing the dialog (Escape equivalent) cancels deletion', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Escape Test');
@@ -367,7 +367,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-016 — Only one deletion occurs (native dialog prevents double-click exploit)
-  test('TC-016: Only one deletion occurs — no duplicate API calls', async ({
+  test('TC-016: Only one deletion occurs — no duplicate API calls', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Double Delete');
@@ -387,7 +387,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-017 — Native confirm dialog blocks background interaction (inherently modal)
-  test('TC-017: Dialog blocks background page interaction while open', async ({
+  test('TC-017: Dialog blocks background page interaction while open', { tag: '@regression' }, async ({
     page,
   }) => {
     const nameA = testProgramName('Block Target');
@@ -410,7 +410,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-018 — Navigating away from the page while the confirmation dialog is open does not delete the program
-  test('TC-018: Navigating away while dialog is pending does not delete the program', async ({
+  test('TC-018: Navigating away while dialog is pending does not delete the program', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = testProgramName('Nav Away');
@@ -427,7 +427,7 @@ test.describe('DS-4: Delete Program', () => {
   });
 
   // TC-019 — Program with HTML tags in its name displays as plain text in the confirmation dialog
-  test('TC-019: HTML tags in program name are shown as plain text in the confirmation dialog', async ({
+  test('TC-019: HTML tags in program name are shown as plain text in the confirmation dialog', { tag: '@regression' }, async ({
     page,
   }) => {
     const name = `${DATA_PREFIX}Plain Text ${Date.now()} <b>Bold</b>`;
