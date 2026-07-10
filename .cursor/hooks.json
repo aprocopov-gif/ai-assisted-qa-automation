@@ -3,7 +3,12 @@
   "hooks": {
     "afterFileEdit": [
       {
-        "command": ".cursor/hooks/guard-constitution.py",
+        "command": ".cursor/hooks/guard-test-assertions.sh",
+        "matcher": "Write|TabWrite",
+        "failClosed": true
+      },
+      {
+        "command": ".cursor/hooks/guard-constitution.sh",
         "matcher": "Write",
         "failClosed": true
       }

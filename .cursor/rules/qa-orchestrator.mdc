@@ -15,14 +15,17 @@ alwaysApply: false
 
 ## Guardrails
 
+- Obey `constitution.mdc` (always on) — MUST / SHOULD / WON'T. Details in `playwright-conventions.mdc`.
 - A human approves any merge, any bug before it's filed, and any ticket close — never merge a PR or close/transition a Jira ticket yourself.
 - If triage can't classify a failure, stop and escalate.
 - Apply **Loop guard** below; on identical failure twice, stop retrying that spec (Backlog mode: move on to the next ticket).
+- If an `afterFileEdit` hook blocks an edit (exit 2), treat it as a hard stop: fix the approach (do not weaken assertions or introduce WON'Ts); do not bypass hooks.
 
 ## Loop guard
 
-- At most 3 delegations per task.
+- At most 3 delegations per task (excluding heal retries within a single red run).
 - Never re-run an identical failing spec more than twice.
+- **At most 5 heals per red run** — see [Heal on red](#heal-on-red).
 
 ## Tools
 
@@ -30,15 +33,30 @@ alwaysApply: false
 - GitHub MCP or `gh` — read runs, create PRs
 - Playwright MCP — re-discover locators during self-heal (accessibility tree on live app)
 - Terminal — `npx playwright test`
-- Delegate to specialist agents (`test-writer`, `triage`, `bug-reporter`)
+- Delegate to specialist agents (`test-writer`, `triage`, `bug-reporter`) or apply `self-heal` skill on drift classification
+- Project hooks (`.cursor/hooks.json`) — see **Hooks** below; they enforce constitution WON'Ts and assertion integrity on Write
 
 ## Skills
 
 - `jira-ticket-analyzer` — analyze tickets with acceptance criteria
 - `explore-and-generate` — ticket-less coverage discovery and Gherkin plan output
-- `ci-failure-triage` — classify a red CI run (drift vs real app bug)
-- `self-heal` — repair drift-classified locator failures (POM patch, re-run, repair PR)
-- `eval-report` — refresh **Current report** in `.cursor/skills/eval-report/SKILL.md` before Done
+- `ci-failure-triage` — classify a red CI run (drift vs real app bug). Used by the `triage` agent to classify red runs
+- `self-heal` — locator drift repair after triage classifies **test issue (drift)**; POM only, assertions unchanged
+- `pom-conventions` — page object rules (locators in POM; no assertions in POM)
+- `jira-bug-reporter` — used by the `bug-reporter` agent when triage classifies **real app bug**
+- `eval-report` — **mandatory before every Done**; refreshes `.cursor/skills/eval-report/eval-report.md`
+- `api-cleanup` — every test that creates data must tear it down
+
+## Hooks
+
+`afterFileEdit` hooks in `.cursor/hooks.json` (`failClosed: true`). Matchers filter **tool type** (`Write` / `TabWrite`), not paths — scripts scope via `file_path` from stdin JSON.
+
+| Hook | Matcher | Scope (in script) | Blocks (exit 2) |
+|---|---|---|---|
+| `guard-test-assertions.sh` | `Write\|TabWrite` | `tests/**` specs | Fewer or commented-out `expect(` |
+| `guard-constitution.sh` | `Write` | `tests/**`, `pages/**` | `waitForTimeout`, XPath, `any`, hardcoded credentials, tags on `test.describe()`, removed/weakened `expect(` |
+
+Heals and generation must stay within these guards: POM locator-only patches are allowed; assertion edits and WON'T introductions are not.
 
 ## Routing
 
@@ -47,21 +65,38 @@ Shared pipeline for single-ticket and Backlog mode (Backlog runs it once per tic
 1. **Analyze** — `jira-ticket-analyzer` (ticket) or `explore-and-generate` (no ticket) → save plan to `features/{ticket_number}` or `features/explore-{slug}`
 2. **Implement** — delegate to `test-writer` (ref: playwright-conventions.mdc)
 3. **Verify** — `npx playwright test` (scope to new/changed spec when possible)
-4. **Run is red** → delegate to `triage` (apply `ci-failure-triage` skill)
+4. **Run is red** → delegate to `triage` (apply `ci-failure-triage` skill); then follow [Heal on red](#heal-on-red)
 5. **Real app bug** → delegate to `bug-reporter` (human approves filing); **never heal**
-6. **Test issue / drift** → apply **Heal on red** below (`self-heal` skill)
+6. **Test issue / drift** → apply [Heal on red](#heal-on-red) (`self-heal` skill)
 7. **Test issue (non-drift)** — logic, data, timing, assertion intent → delegate to `test-writer` (propose fix, human OKs)
-8. **Reliability eval (mandatory)** — before Done / end of backlog batch, refresh **Current report** in `.cursor/skills/eval-report/SKILL.md` (see below; skill `eval-report`)
+8. **Reliability eval (mandatory)** — apply `eval-report` skill; refresh `.cursor/skills/eval-report/eval-report.md`. **No Done without this step.**
 
 Use `jira-ticket-analyzer` when a Jira ticket or ACs exist; use `explore-and-generate` only for ticket-less coverage requests.
 
 ## Reliability eval (mandatory)
 
-**Best location:** this orchestrator rule — not a CI job alone. Flake/heal/generation/ask-vs-guess need CI logs, PR history, and session review; Cursor has no built-in telemetry.
+### Where it lives (decision)
 
-**When (required):** after every completed single-ticket Done, after every backlog batch summary, and after any heal or generation PR is opened. Do not mark the run Done until the **Current report** section in `.cursor/skills/eval-report/SKILL.md` is updated or explicitly confirmed unchanged with a dated note.
+| Layer | Path | Owns |
+|---|---|---|
+| **Mandate (best location)** | This file — `qa-orchestrator.mdc` Routing §8 + Done | *When* eval must run; blocks Done if skipped |
+| **Procedure** | `.cursor/skills/eval-report/SKILL.md` | *How* to measure each metric |
+| **Artifact** | `.cursor/skills/eval-report/eval-report.md` | The numbers, risk, next action |
 
-**What to update in `.cursor/skills/eval-report/SKILL.md` (Current report section):**
+**Why not CI alone?** Flake/heal/generation need `gh` logs + PR history; ask-vs-guess needs session review. Cursor has no built-in telemetry — a workflow job cannot score ask-vs-guess or masked regressions in heal diffs.
+
+### When (required — no skip)
+
+Run before claiming Done for **every** orchestrator completion:
+
+- Single-ticket Done
+- Backlog batch summary
+- After any heal or generation PR is opened
+- Red-run heal mode Done (bug filed or repair PR opened)
+
+Do **not** mark Done until `eval-report.md` is updated **or** confirmed unchanged with a **dated note** in that file (same window, no new CI/PR evidence).
+
+### What to update in `eval-report.md`
 
 | Metric | Measure from |
 |---|---|
@@ -70,9 +105,9 @@ Use `jira-ticket-analyzer` when a Jira ticket or ACs exist; use `explore-and-gen
 | Generation-gate pass rate | Generated specs green + conforming + maps-to-AC on the **first** PR |
 | Ask-vs-guess | Session review — clarifying questions vs invented values |
 
-End the report with **top reliability risk** and **next action**.
+Each metric: **number**, **how measured**, **one-line interpretation**. End with **top reliability risk** and **next action**.
 
-## Heal on red
+## Heal on red {#heal-on-red}
 
 When CI or local verification is red, **triage first** — never patch locators before classification.
 
@@ -82,7 +117,7 @@ When CI or local verification is red, **triage first** — never patch locators 
 2. **Real app bug** → delegate to `bug-reporter`; file and link the Jira ticket. **Do not heal.**
 3. **Drift (test issue)** — stale selector, renamed label, moved element → apply `self-heal` skill:
    - Re-discover the element via **Playwright MCP** against the live app (accessibility tree; role/label first).
-   - Patch **only** the POM locator (minimal diff; no spec edits).
+   - Patch **only** the POM locator (minimal diff; no spec edits). Hooks will **block** assertion weakening and WON'T introductions — do not fight them.
    - Re-run the failing spec and prove **green** with **assertions unchanged** — no weakening, deletion, or replacement.
    - Open a **repair PR** linked to the failed run and triage comment. Branch e.g. `heal/<spec-slug>-<short-desc>`. **Never merge** — a human approves.
 
@@ -90,13 +125,15 @@ When CI or local verification is red, **triage first** — never patch locators 
 
 - **At most 5 heals per run** (orchestrator session / backlog batch). After 5, stop and escalate with a summary of what was healed and what remains red.
 - **Stop and escalate** if a heal cannot prove green without touching assertions, specs, waits, or test logic.
-- **Never heal an assertion** — a green run via assertion changes is a failure; escalate.
+- **Never heal an assertion** — a green run via assertion changes is a failure; escalate. Hooks enforce this mechanically.
 - If the same locator breaks again after a heal, stop — likely not simple drift.
+- If a heal edit is blocked by `guard-test-assertions` or `guard-constitution`, stop that heal path and escalate — do not retry with a weaker assertion.
 
 ### Hard refusals (orchestrator)
 
 - Never heal when triage says **real app bug**, or classification is **missing / ambiguous**.
 - Never merge a repair PR — human approval required (see Guardrails).
+- Never bypass or disable project hooks to land a heal or generation PR.
 
 ## Backlog mode
 
@@ -138,6 +175,10 @@ When the batch finishes or the budget is exhausted, report: tickets processed / 
 
 ## Done
 
-**Single ticket:** suite is green for the ticket, or a bug is filed and linked (human approves); **reliability eval refreshed** (`.cursor/skills/eval-report/SKILL.md` → Current report).
+**Single ticket mode:** suite is green for the ticket, or a bug is filed and linked (human approves); **and** Routing §8 reliability eval done.
 
-**Backlog mode:** each completed ticket has an open PR, Jira link, and `tests-generated` label (except tickets stopped on repeated failure); run summary delivered; **reliability eval refreshed**.
+**Backlog mode:** each completed ticket has an open PR, Jira link, and `tests-generated` label (except tickets stopped on repeated failure); run summary delivered; **and** Routing §8 reliability eval done.
+
+**Red-run heal mode:** triage complete; drift → repair PR linked to run (human merges); real app bug → Jira bug filed and linked (human approved filing); **and** Routing §8 reliability eval done.
+
+**Hard stop:** claiming Done without refreshing or dated-confirming `.cursor/skills/eval-report/eval-report.md` is incomplete work — finish eval first.

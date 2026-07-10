@@ -152,13 +152,14 @@ Every `test()` carries **exactly one** of:
 | `@regression` | Full functional depth / edge cases |
 | `@api` | Contract / request-level checks (little or no UI) |
 | `@e2e` | Multi-step UI journeys across pages |
-| `@destructive` | Mutates **shared/global** state (locale, roles, feature flags, org settings) |
+| `@destructive` | Mutates **shared/global** state (locale, roles, feature flags, org settings, tenant settings) |
 
 Rules:
 
 - Tag the **test**, never `test.describe()` (constitution WON'T).
 - A test that creates records and cleans up **only its own data** keeps an importance tag (`@smoke` / `@sanity` / `@regression` / `@e2e` / `@api`) — that is **not** `@destructive`.
-- `@destructive` is **only** for shared/global mutations. Those tests **must** run serially (`npm run test:destructive` → `--workers=1`) and **must** register an `afterEach` / `afterAll` that **reverts** the shared state. Any state-mutating test (including own-data creates) still needs cleanup; shared-state tests need an explicit revert hook.
+- `@destructive` is **only** for shared/global mutations (locale, roles, feature flags, org settings). Those tests **must** run serially (`npm run test:destructive` → `--workers=1`).
+- **Any state-mutating test** requires an `afterEach` / `afterAll` (or equivalent fixture teardown): own-data → delete what it created; shared/global (`@destructive`) → **revert** the prior state. Never leave mutated state for the next worker.
 
 ✅ **Good**
 
