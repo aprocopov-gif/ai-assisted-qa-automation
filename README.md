@@ -86,8 +86,8 @@ Ticket-scoped scripts (DS-1 … DS-5) are also in `package.json` (`npm run test:
 Project guidance lives under `.cursor/`:
 
 - **Rules** — `constitution.mdc` (always-on non-negotiables), `playwright-conventions.mdc`, `qa-orchestrator.mdc`
-- **Hooks** — `afterFileEdit` constitution guard (blocks WON'T violations in `tests/**` / `pages/**`)
 - **Agents** — `triage` (red CI), `bug-reporter` (Jira bug), `test-writer` (plan → spec)
 - **Skills** — `api-cleanup`, `ci-failure-triage`, `didaxis-program-deleter`, `explore-and-generate`, `exploratory-charter`, `jira-bug-reporter`, `jira-ticket-analyzer`, `pom-conventions`, `eval-report`, `self-heal`
+- **Hooks** — `afterFileEdit` guards in `.cursor/hooks.json` block WON'T violations and weakened `expect(` under `tests/**` / `pages/**`
 
 Open the repo in Cursor; rules apply automatically. Invoke agents/skills by name when working tickets, failures, or new coverage.
