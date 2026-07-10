@@ -17,7 +17,7 @@ Non-negotiables for this Playwright project. Details live in `playwright-convent
 | Data | Unique per run (`Date.now()`, Faker); every test cleans up what it creates |
 | Tags | Exactly one of `@smoke` `@sanity` `@regression` `@api` `@e2e` `@destructive`; never on `describe` |
 | Destructive | `@destructive` only for shared/global mutations; serial + `afterEach`/`afterAll` revert |
-| Reliability eval | Refresh **Current report** in `.cursor/skills/eval-report/SKILL.md` before orchestrator Done |
+| Reliability eval | Orchestrator Done requires `eval-report` → refresh `.cursor/skills/eval-report/eval-report.md` (mandate in `qa-orchestrator.mdc`) |
 
 ## SHOULD
 
@@ -41,11 +41,11 @@ Non-negotiables for this Playwright project. Details live in `playwright-convent
 
 ## Agent governance
 
-Behavioral contract (not hook-enforced). **Audit, then edit** — explore enough to know the real path/enum/env/message before changing files.
+Behavioral contract (**not hook-enforced** — hooks catch WON'Ts after edits; this governs *before* you edit). **Audit, then edit** — explore enough to know the real path/enum/env/message before changing files.
 
 ### Proposal (required before non-trivial edits)
 
-Emit this block, then wait for the confidence gate:
+Every non-trivial task emits this block, then waits for the confidence gate:
 
 ```text
 Proposal
