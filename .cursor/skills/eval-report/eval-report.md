@@ -2,8 +2,10 @@
 
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `legion-qa-ai-assisted-program-ann`  
-**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-09)  
-**Generated:** 2026-07-09  
+**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-14)  
+**Generated:** 2026-07-14  
+
+**Batch note (2026-07-14):** Backlog automation scan — Jira queue empty (`issues: []` for In Progress DS tickets without `tests-generated`). Atlassian MCP `needsAuth` (interactive auth unavailable in Cloud Agent); unauthenticated Jira REST corroborates empty queue. GH Test Generation [29191733137](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/29191733137) (2026-07-12) also completed with no new PRs. **0 tickets processed**; no generation PRs opened this run.
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
@@ -13,9 +15,9 @@
 
 | | |
 |---|---|
-| **Number** | **3** flaky test outcomes in **27** passing E2E runs → **3/27 runs (11%)** showed any flaky result; **~0.7%** of test executions in runs that reported counts (`1 flaky` / `143 passed + 1 flaky` each). Post–Block-15 runs ([28992695571](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/28992695571) sanity, [28992482239](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/28992482239) smoke) reported **0** flaky. |
-| **How measured** | `gh run list --workflow=e2e.yml --limit 30`, then `gh run view <id> --log` grepped for `flaky`, `Retry #`, `passed on retry`. CI uses `retries: 2` (`playwright.config.ts`). Flaky tests: `ds4-delete-program` **TC-004**, `ds2-edit-program` **TC-002**, `ds4-delete-program` **TC-017**. Auth-setup `Retry #` on failed runs = hard fails, not flakes. Cleanup 404s treated as noise. |
-| **What it tells us** | Retries keep CI green, but DS-2 TC-002 and DS-4 TC-004/TC-017 are recurring timing/race candidates. |
+| **Number** | **0** runs with flaky/retry signals in **27** passing E2E runs → **0/27 runs (0%)** showed any flaky result in the current window. Latest green runs ([29241387553](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/29241387553), [29188489392](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/29188489392), [29148758944](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/29148758944)) report **49 passed, 0 flaky** each. |
+| **How measured** | `gh run list --workflow=e2e.yml --limit 30`, then `gh run view <id> --log` grepped for `flaky`, `Retry #`, `passed on retry`. CI uses `retries: 2` (`playwright.config.ts`). Auth-setup `Retry #` on failed runs = hard fails, not flakes. Cleanup 404s treated as noise. |
+| **What it tells us** | Flake rate improved vs prior window (8% → 0%); recent empty-backlog eval commits land green with 0 flaky. |
 
 ---
 
@@ -43,18 +45,18 @@
 
 | | |
 |---|---|
-| **Number** | **This refresh session: ~0 asks vs 0 invented product values**. **Prior Block-15 sample: ~2 asks vs ~5 invented defaults** (ask:guess ≈ 0.4). Broader suite history: **not measurable** from git alone. |
-| **How measured** | Manual session review of agent transcripts + PR bodies (Cursor has no ask/guess telemetry). Guessing examples: `@high→@smoke` tag mapping, env aliases, branch naming without confirmation. |
-| **What it tells us** | Repo exploration + `gh` evidence beats silent defaults; still prefer one explicit ask when tags or credentials are under-specified. |
+| **Number** | **This refresh session: 0 asks vs 0 invented product values** (empty queue — no spec generation). **Prior Block-15 sample: ~2 asks vs ~5 invented defaults** (ask:guess ≈ 0.4). Broader suite history: **not measurable** from git alone. |
+| **How measured** | Manual session review of agent transcripts + PR bodies (Cursor has no ask/guess telemetry). This run used Jira REST + GH Actions corroboration instead of inventing ticket keys. |
+| **What it tells us** | Empty-queue guardrail worked — no invented tickets or specs. Atlassian MCP auth remains the blocker for live labeling. |
 
 ---
 
 ## Top reliability risk
 
-**Retries masking DS-4 and DS-2 flakes** — three distinct tests passed only on retry in the last 30 runs; tagged smoke/sanity slices may surface these more often in PR/push CI.
+**Backlog automation blocked on Jira access in Cloud Agent** — Atlassian MCP requires desktop IDE auth; unauthenticated REST returns empty results, preventing queue discovery and `tests-generated` labeling even when tickets exist.
 
 ## Next action
 
-1. **Stabilize DS-4 TC-004 and TC-017** and **DS-2 TC-002** (fix races with web-first waits; do not raise timeouts as the fix).
-2. On the next generation PR, add an explicit **generation-gate checklist** (green + conventions + AC map) in the PR body and apply label **`tests-generated`**.
-3. When opening a heal repair PR, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** so heal success rate stays measurable under the orchestrator path.
+1. **Authenticate Atlassian MCP** in Cursor desktop IDE so Cloud Agent runs can query Jira and add labels.
+2. To queue work: move a DS ticket to **In Progress** and remove (or omit) the **`tests-generated`** label.
+3. **Stabilize DS-4 TC-004/TC-017** and **DS-2 TC-002** if flakes reappear in PR/push CI (web-first waits; do not raise timeouts as the fix).
