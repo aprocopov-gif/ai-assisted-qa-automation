@@ -2,10 +2,12 @@
 
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `legion-qa-ai-assisted-program-ann`  
-**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-09)  
-**Generated:** 2026-07-09  
+**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-20)  
+**Generated:** 2026-07-20  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
+
+**Batch scan (2026-07-20):** Backlog queue empty — Jira JQL `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated))` returned **0 eligible tickets** (unauthenticated REST; corroborated by authenticated GH Actions run [29686007140](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/29686007140) on 2026-07-19: **Queue empty**, all In Progress tickets already labeled `tests-generated`). Atlassian MCP **needsAuth** in Cloud Agent — Jira labeling unavailable this run. **Tickets processed: 0 / 5 budget.** Metrics below unchanged; spot-check of last 10 eval-report E2E runs: **0** flaky markers.
 
 ---
 
@@ -55,6 +57,7 @@
 
 ## Next action
 
-1. **Stabilize DS-4 TC-004 and TC-017** and **DS-2 TC-002** (fix races with web-first waits; do not raise timeouts as the fix).
-2. On the next generation PR, add an explicit **generation-gate checklist** (green + conventions + AC map) in the PR body and apply label **`tests-generated`**.
-3. When opening a heal repair PR, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** so heal success rate stays measurable under the orchestrator path.
+1. **Queue work:** Move a DS ticket to **In Progress** without the `tests-generated` label (or remove that label from a ticket that still needs generation).
+2. **Authenticate Atlassian MCP** in Cursor desktop IDE so Cloud Agent runs can label tickets after generation.
+3. **Stabilize DS-4 TC-004 and TC-017** and **DS-2 TC-002** (fix races with web-first waits; do not raise timeouts as the fix).
+4. On the next generation PR, add an explicit **generation-gate checklist** (green + conventions + AC map) in the PR body and apply label **`tests-generated`**.
