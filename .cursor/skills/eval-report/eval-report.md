@@ -2,10 +2,21 @@
 
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `legion-qa-ai-assisted-program-ann`  
-**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-09)  
-**Generated:** 2026-07-09  
+**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-24)  
+**Generated:** 2026-07-24  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
+
+### 2026-07-24 backlog batch scan (empty queue)
+
+| | |
+|---|---|
+| **Queue JQL** | `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated)) ORDER BY priority ASC, key ASC` |
+| **Eligible tickets** | **0** — Jira REST `/rest/api/3/search/jql` returned `issues: []` (HTTP 200). Atlassian MCP `needsAuth` (labeling unavailable in Cloud Agent). |
+| **Corroboration** | GH Test Generation [30006711837](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/30006711837) (2026-07-23) authenticated scan found empty queue; all 10 In Progress tickets already have `tests-generated` (DS-1–DS-5, DS-119, DS-120, DS-129, DS-131, DS-177). |
+| **Processed / skipped** | **0 / 0** — per orchestrator guardrails, empty queue → exit without starting coordinator. |
+| **E2E spot-check** | Last **10** `e2e.yml` runs (2026-07-19–2026-07-23 eval scans): all **success**, **0** flaky/retry markers in logs. |
+| **Metrics below** | Unchanged from 2026-07-09 full refresh — no new generation or heal PRs in window. |
 
 ---
 
