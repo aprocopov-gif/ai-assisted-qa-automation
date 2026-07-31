@@ -2,10 +2,12 @@
 
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `legion-qa-ai-assisted-program-ann`  
-**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-09)  
-**Generated:** 2026-07-09  
+**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-31)  
+**Generated:** 2026-07-31  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
+
+**2026-07-31 backlog scan:** Jira queue empty (`project = DS`, `status = "In Progress"`, label `tests-generated` absent → **0** eligible). Unauthenticated Jira REST returned empty; corroborated by authenticated GH Test Generation run [30542573637](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/30542573637) (2026-07-30) — all 10 In Progress tickets already labeled. **0/5 budget used.** Metrics below unchanged from prior window; latest flake signal remains **1 flaky** in run [30442096403](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/30442096403) (2026-07-29).
 
 ---
 
