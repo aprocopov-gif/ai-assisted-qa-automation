@@ -4,8 +4,17 @@
 **Repo:** `legion-qa-ai-assisted-program-ann`  
 **Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-09)  
 **Generated:** 2026-07-09  
+**Last backlog scan:** 2026-09-02 — **0 eligible** In Progress DS tickets (JQL below); metrics unchanged this window.
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
+
+### 2026-09-02 empty-queue note
+
+- **JQL:** `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated))`
+- **Result:** 0 issues (API HTTP 200; `issues: []`)
+- **Budget used:** 0/5 — no specs written, no tests run, no merges
+- **Corroboration:** Prior batch (PR [#32](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/32), 2026-07-31) reported all 10 In Progress tickets already labeled `tests-generated` (DS-1–DS-5, DS-119, DS-120, DS-129, DS-131, DS-177)
+- **Blockers:** Atlassian MCP auth unavailable in Cloud Agent; Jira `/rest/api/3/issue/DS-1` returns 404 (permission or scope)
 
 ---
 
