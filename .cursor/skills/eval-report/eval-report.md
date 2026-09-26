@@ -2,10 +2,12 @@
 
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `legion-qa-ai-assisted-program-ann`  
-**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-07-09)  
-**Generated:** 2026-07-09  
+**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-09-26)  
+**Generated:** 2026-09-26  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
+
+**Backlog batch note (2026-09-26):** Orchestrator could **not** read the DS In Progress queue. `GET ${ATLASSIAN_BASE_URL}/rest/api/3/myself` with `ATLASSIAN_EMAIL` + `ATLASSIAN_API_TOKEN` returned **HTTP 401** (`x-seraph-loginreason: AUTHENTICATED_FAILED`). Project `DS` and issue `DS-1` were unreachable. **Tickets processed: 0 / 5 budget.** No specs written; no ticket PRs opened. Atlassian MCP also unavailable (`needsAuth`; interactive auth not supported in this agent environment).
 
 ---
 
@@ -13,9 +15,9 @@
 
 | | |
 |---|---|
-| **Number** | **3** flaky test outcomes in **27** passing E2E runs → **3/27 runs (11%)** showed any flaky result; **~0.7%** of test executions in runs that reported counts (`1 flaky` / `143 passed + 1 flaky` each). Post–Block-15 runs ([28992695571](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/28992695571) sanity, [28992482239](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/28992482239) smoke) reported **0** flaky. |
-| **How measured** | `gh run list --workflow=e2e.yml --limit 30`, then `gh run view <id> --log` grepped for `flaky`, `Retry #`, `passed on retry`. CI uses `retries: 2` (`playwright.config.ts`). Flaky tests: `ds4-delete-program` **TC-004**, `ds2-edit-program` **TC-002**, `ds4-delete-program` **TC-017**. Auth-setup `Retry #` on failed runs = hard fails, not flakes. Cleanup 404s treated as noise. |
-| **What it tells us** | Retries keep CI green, but DS-2 TC-002 and DS-4 TC-004/TC-017 are recurring timing/race candidates. |
+| **Number** | **Insufficient new flake evidence in this window’s downloadable logs** for the newest runs; prior measurement (through 2026-07-09) remains the last quantified flake sample: **3 flaky outcomes in 27 passing E2E runs (~11% of runs; ~0.7% of executions)**. Newest e2e successes ([36203877159](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36203877159), [36203874961](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36203874961)) showed **0** `flaky` / `Retry #` / `passed on retry` markers in `gh run view --log`. |
+| **How measured** | `gh run list --workflow=e2e.yml --limit 30`; grepped recent run logs for `flaky`, `Retry #`, `passed on retry`. CI uses `retries: 2`. Most of the last-30 list are empty-backlog docs PRs (smoke-only), not full regression — flake denominators from those runs are not comparable to the July suite sample. |
+| **What it tells us** | No new flake signal in the latest smoke-sized greens; historical DS-2/DS-4 retry flakes are still the last known suite risk until a fuller regression window is re-logged. |
 
 ---
 
@@ -23,9 +25,9 @@
 
 | | |
 |---|---|
-| **Number** | **Clean heals: 1 / 2 (50%)** in the recent locator-repair window. **Masked-regression count: 0** (required target: **0**). |
-| **How measured** | PR history (`gh pr list`, `gh pr checks`, `gh pr diff`): [#10](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/10) (first CI failed) vs [#11](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/11) (first CI passed). Counted only locator heals with assertions unchanged; masked-regression = `expect()` removed/weakened in heal diffs (**must stay 0**). |
-| **What it tells us** | Heals without triage + Playwright MCP rediscovery can ship wrong selectors; masked-regression discipline holds at 0. |
+| **Number** | **No new locator-heal PRs in this window.** Prior: **Clean heals 1 / 2 (50%)**; **masked-regression count: 0**. |
+| **How measured** | `gh pr list --state all --search 'heal OR Heal'`; prior [#10](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/10) / [#11](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/11). This batch performed **0** heals (queue unreachable). |
+| **What it tells us** | Heal rate unchanged; masked-regression discipline still at 0. |
 
 ---
 
@@ -33,9 +35,9 @@
 
 | | |
 |---|---|
-| **Number** | **First-PR CI green: 2 / 2 (100%)** for ticket-shaped generation PRs ([#7](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/7) DS-4, [#8](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/8) DS-1). **Full gate (green + conforming + maps-to-AC): incomplete / unknown** — not re-audited against Jira AC this refresh. |
-| **How measured** | `gh pr list` for `test(DS-*)` titles; `gh pr checks` on first PR; `gh run list --workflow=test-generation.yml --limit 10`. Full gate needs green CI + `playwright-conventions.mdc` conformance + AC map in PR body. |
-| **What it tells us** | Early agent-generated specs can land green on first PR, but the conforming+AC checklist is only half-instrumented. |
+| **Number** | **This batch: 0 / 0** (no ticket generation attempted). **Recent `test-generation.yml`:** last completed runs through 2026-09-25 are **failures** before generation (e.g. [36156034228](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36156034228) — Cursor usage limit), so they do **not** count as generation-gate samples. Prior ticket-first greens remain **2 / 2 (100%)** for [#7](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/7) / [#8](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/8). |
+| **How measured** | `gh run list --workflow=test-generation.yml --limit 10`; `gh pr list` for `test(DS-*)`. Full gate = first PR CI green + conventions + AC map. |
+| **What it tells us** | Generation gate is stalled upstream of Playwright: invalid/expired Jira token and intermittent Cursor usage limits prevent AC→spec PRs from entering the gate. |
 
 ---
 
@@ -43,18 +45,18 @@
 
 | | |
 |---|---|
-| **Number** | **This refresh session: ~0 asks vs 0 invented product values**. **Prior Block-15 sample: ~2 asks vs ~5 invented defaults** (ask:guess ≈ 0.4). Broader suite history: **not measurable** from git alone. |
-| **How measured** | Manual session review of agent transcripts + PR bodies (Cursor has no ask/guess telemetry). Guessing examples: `@high→@smoke` tag mapping, env aliases, branch naming without confirmation. |
-| **What it tells us** | Repo exploration + `gh` evidence beats silent defaults; still prefer one explicit ask when tags or credentials are under-specified. |
+| **Number** | **This session: 1 ask (rotate/fix `ATLASSIAN_API_TOKEN`) vs 0 invented ticket ACs or specs** — ask:guess = stop-without-guess. |
+| **How measured** | Session review: Jira REST 401 verified; did not invent In Progress tickets from `block2/` or `features/` caches; did not write specs without live AC. |
+| **What it tells us** | Correct stop on missing auth; next run needs working Jira credentials before any generation-gate work. |
 
 ---
 
 ## Top reliability risk
 
-**Retries masking DS-4 and DS-2 flakes** — three distinct tests passed only on retry in the last 30 runs; tagged smoke/sanity slices may surface these more often in PR/push CI.
+**Jira API auth failure blocks the entire backlog pipeline** — `ATLASSIAN_API_TOKEN` (paired with `ATLASSIAN_EMAIL` against `https://legionqaschool.atlassian.net`) returns 401, so In Progress tickets cannot be selected or labeled `tests-generated`. Secondary: recent `test-generation.yml` failures from Cursor usage limits.
 
 ## Next action
 
-1. **Stabilize DS-4 TC-004 and TC-017** and **DS-2 TC-002** (fix races with web-first waits; do not raise timeouts as the fix).
-2. On the next generation PR, add an explicit **generation-gate checklist** (green + conventions + AC map) in the PR body and apply label **`tests-generated`**.
-3. When opening a heal repair PR, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** so heal success rate stays measurable under the orchestrator path.
+1. **Rotate / re-issue `ATLASSIAN_API_TOKEN`** for `legion.jira@proton.me` on `legionqaschool.atlassian.net` and update the GitHub Actions secret (and local env). Confirm with `GET /rest/api/3/myself` → 200.
+2. Re-run backlog mode; process up to 5 In Progress tickets missing `tests-generated`.
+3. Keep prior flake follow-ups (DS-4 TC-004/TC-017, DS-2 TC-002) for the next green suite window with downloadable full logs.
