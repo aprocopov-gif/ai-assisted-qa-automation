@@ -2,12 +2,12 @@
 
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `legion-qa-ai-assisted-program-ann`  
-**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-09-27)  
-**Generated:** 2026-09-27  
+**Window:** last **30** `e2e.yml` runs + related PRs (through 2026-09-28)  
+**Generated:** 2026-09-28  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
-**Batch scan (2026-09-27 UTC):** Cloud Agent backlog run — Atlassian MCP `needsAuth`; unauthenticated Jira JQL returned **0** eligible issues. GH Test Generation [36249948787](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36249948787) (2026-09-26) also processed **0 / 5** tickets (no readable In Progress queue). **No new Playwright execution data** since 2026-07-09 for flake/heal/generation numerators below — metrics retained with this dated confirmation.
+**Batch scan (2026-09-28 UTC, cron 10:00):** Cloud Agent backlog run — Atlassian MCP `needsAuth` (interactive auth unavailable); unauthenticated Jira JQL returned **0** eligible issues (`issues: []`, HTTP 200). Corroboration: GH Test Generation [36329777144](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36329777144) (2026-09-27) **hard-stopped** — Jira secrets present but **`GET /rest/api/3/myself` → 401** (false-empty queue). **Processed 0 / 5** tickets; no specs, no ticket PRs, no `tests-generated` labels. **No new Playwright execution data** since 2026-07-09 for flake/heal/generation numerators below — metrics retained with this dated confirmation.
 
 ---
 
@@ -45,7 +45,7 @@
 
 | | |
 |---|---|
-| **Number** | **2026-09-27 batch: 0 asks, 0 invented tickets** — queue from Jira REST (unauthenticated) + corroborating GH run; did not invent DS keys from local `features/`. **Prior Block-15 sample: ~2 asks vs ~5 invented defaults** (ask:guess ≈ 0.4). Broader suite history: **not measurable** from git alone. |
+| **Number** | **2026-09-28 batch: 0 asks, 0 invented tickets** — queue from Jira REST (unauthenticated) + GH run [36329777144](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36329777144); did not invent DS keys from local `features/`. **Prior Block-15 sample: ~2 asks vs ~5 invented defaults** (ask:guess ≈ 0.4). Broader suite history: **not measurable** from git alone. |
 | **How measured** | Manual session review of agent transcripts + PR bodies (Cursor has no ask/guess telemetry). Guessing examples: `@high→@smoke` tag mapping, env aliases, branch naming without confirmation. |
 | **What it tells us** | Repo exploration + `gh` evidence beats silent defaults; authenticate Atlassian MCP for live queue + labeling. |
 
@@ -53,10 +53,11 @@
 
 ## Top reliability risk
 
-**Backlog automation blocked without Jira auth** — Cloud Agent cannot label `tests-generated` or confirm queue state; unauthenticated search returns empty and risks false “no work” while tickets may exist.
+**Backlog automation blocked without valid Jira credentials** — Cloud Agent Atlassian MCP `needsAuth`; unauthenticated JQL returns empty; GH `dev1` secrets return **401** on `/myself` ([36329777144](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36329777144)). Cannot label `tests-generated` or trust queue state.
 
 ## Next action
 
-1. **Authenticate Atlassian MCP** in Cursor (team Cloud Agent environment) so In Progress queue and `tests-generated` labeling work on cron runs.
-2. To queue work: move a DS ticket to **In Progress** and remove **`tests-generated`** until specs land.
-3. **Stabilize DS-4 TC-004/TC-017** and **DS-2 TC-002** when the next full E2E window runs (web-first waits; no timeout inflation).
+1. **Rotate/fix `ATLASSIAN_API_TOKEN`** (and matching `ATLASSIAN_EMAIL`) in GitHub **`dev1`** environment; confirm `GET /rest/api/3/myself` → **200**.
+2. **Authenticate Atlassian MCP** in Cursor (team Cloud Agent environment) for cron labeling and queue reads.
+3. To queue work: move a DS ticket to **In Progress** and remove **`tests-generated`** until specs land.
+4. **Stabilize DS-4 TC-004/TC-017** and **DS-2 TC-002** when the next full E2E window runs (web-first waits; no timeout inflation).
