@@ -1,5 +1,5 @@
 {
-  "name": "legion-qa-ai-assisted-program-ann",
+  "name": "ai-assisted-qa-automation",
   "private": true,
   "scripts": {
     "postinstall": "playwright install chromium",
