@@ -10,8 +10,8 @@ End-to-end Playwright suite for [Didaxis Studio](https://test.didaxis.studio), p
 ## Install & configure
 
 ```bash
-git clone <this-repo>
-cd legion-qa-ai-assisted-program-ann
+git clone https://github.com/aprocopov-gif/ai-assisted-qa-automation.git
+cd ai-assisted-qa-automation
 npm install
 cp .env.example .env
 ```
