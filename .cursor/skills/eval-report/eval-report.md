@@ -2,12 +2,12 @@
 
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `ai-assisted-qa-automation`  
-**Window:** `e2e.yml` runs 2026-07-10 → 2026-07-22 (14 daily backlog-scan runs) + related PRs, plus local DS-4 re-verify  
-**Generated:** 2026-07-22  
+**Window:** `e2e.yml` runs 2026-07-10 → 2026-09-30 (daily backlog-scan runs) + related PRs  
+**Generated:** 2026-09-30  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
-**This refresh trigger:** single-ticket Done for **DS-4** (user-requested `run DS-4`). DS-4 already had a generated plan + spec (`tests-generated` label present); this session re-verified the existing spec rather than regenerating it.
+**This refresh trigger:** scheduled **Backlog mode** run (2026-09-30 10:00 UTC / 06:00 EST cron). **0 / 5** tickets processed — Jira queue unreadable (Atlassian MCP `needsAuth`; unauthenticated JQL returns false-empty `issues: []`; GH Test Generation [36464990412](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/actions/runs/36464990412) corroborates **`GET /rest/api/3/myself` → 401** with `dev1` secrets). No specs, ticket PRs, or `tests-generated` labels this run.
 
 ---
 
@@ -45,18 +45,18 @@
 
 | | |
 |---|---|
-| **Number** | **This session (DS-4 run): 0 asks vs 0 invented product values.** |
-| **How measured** | Session review. Ticket read via Atlassian MCP (`getJiraIssue` DS-4); CI/PR evidence via `gh`; verification via local `npx playwright test`. No locators, credentials, or AC were invented. One judgment call recorded (not invented): proceeded despite the `tests-generated` label because the user explicitly asked to run DS-4 — flagged to the user rather than silently skipped. |
-| **What it tells us** | MCP + `gh` + local run evidence continues to beat silent defaults; the single ambiguity (already-generated ticket) was surfaced, not guessed. |
+| **Number** | **This session (2026-09-30 backlog scan): 0 asks vs 0 invented tickets/AC.** |
+| **How measured** | Session review. Queue probe via unauthenticated Jira REST + Atlassian MCP status; corroboration via `gh run view 36464990412 --log`. Did **not** invent work from local `features/DS-*` (DS-1…DS-5 already have specs). |
+| **What it tells us** | Guardrail held: false-empty JQL and missing MCP auth did not trigger speculative test generation. |
 
 ---
 
 ## Top reliability risk
 
-**Stale heal / full-generation-gate instrumentation.** The prior top risk (retries masking DS-4/DS-2 flakes) did **not** recur in this window and is downgraded. The dominant gap now is that recent CI is entirely daily **empty-backlog doc scans** — no new heal or ticket-generation PRs — so heal success (1/2) and the full generation gate (green + conforming + maps-to-AC) are unrefreshed and cannot be scored on fresh evidence.
+**Jira API auth blocks the entire backlog pipeline.** Cloud Agent cannot authenticate Atlassian MCP; unauthenticated JQL is a false empty; GitHub `dev1` `ATLASSIAN_API_TOKEN` returns **401** on `/rest/api/3/myself`. Until credentials are fixed, every scheduled run will report 0/5 regardless of real queue depth — a silent operational failure mode worse than a red build.
 
 ## Next action
 
-1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
-2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
-3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+1. **Fix `ATLASSIAN_API_TOKEN`** (and related `ATLASSIAN_*` secrets) in GitHub environment **dev1**; verify with `GET /rest/api/3/myself` → 200 from Actions and authenticate **Atlassian MCP** for Cloud Agent runs.
+2. Move at least one DS ticket to **In Progress** without **`tests-generated`** to validate end-to-end generation after auth repair.
+3. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so generation-gate and heal metrics leave the stale state.
