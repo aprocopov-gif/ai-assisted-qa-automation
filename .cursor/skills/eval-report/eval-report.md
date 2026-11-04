@@ -5,6 +5,8 @@
 **Window:** `e2e.yml` runs 2026-07-10 → 2026-07-22 (14 daily backlog-scan runs) + related PRs, plus local DS-4 re-verify  
 **Generated:** 2026-07-22  
 
+**2026-11-04 backlog scan (cron 10:03 UTC / 06:03 EDT):** Metrics **unchanged** — no ticket generation, heal, or new substantive `e2e.yml` evidence in window (recent runs remain daily auth-blocked scan PRs failing in ~10–15s). Blockers: Atlassian MCP `needsAuth` (`mcp_auth_error` on run start; interactive auth unavailable in Cloud Agent — reconnect **Atlassian** under Cursor dashboard **Integrations** for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673`); no `ATLASSIAN_*` / `DIDAXIS_*` in env; unauthenticated Jira JQL returned `issues: []` (HTTP 200, **not trustworthy**); `gh workflow run test-generation.yml` → 403. **Processed 0 / 5** tickets. Ask-vs-guess this run: **0 asks, 0 invented values** (did not guess queue contents). Agent run: https://cursor.com/agents/bc-83604856-7298-4c47-864b-795549d43309
+
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
 **This refresh trigger:** single-ticket Done for **DS-4** (user-requested `run DS-4`). DS-4 already had a generated plan + spec (`tests-generated` label present); this session re-verified the existing spec rather than regenerating it.
