@@ -5,6 +5,8 @@
 **Window:** `e2e.yml` runs 2026-07-10 → 2026-07-22 (14 daily backlog-scan runs) + related PRs, plus local DS-4 re-verify  
 **Generated:** 2026-07-22  
 
+**2026-11-07 backlog scan (cron 10:03 UTC / 06:03 EDT):** Metrics **unchanged** — no ticket generation, heal, or new substantive `e2e.yml` evidence in window (recent runs remain daily auth-blocked scan PRs failing in ~10–15s on `Playwright does not support chromium on ubuntu26.04-x64`). Blockers: Atlassian MCP `needsAuth` (interactive `mcp_auth` unavailable in Cloud Agent — reconnect **Atlassian** under Cursor dashboard **Integrations** for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673`); no `ATLASSIAN_*` / `DIDAXIS_*` app secrets bound; unauthenticated Jira JQL returned `issues: []` (HTTP 200, **not trustworthy**). **Processed 0 / 5** tickets. Ask-vs-guess this run: **0 asks, 0 invented values** (did not guess queue contents). Agent run: https://cursor.com/agents/bc-ed7af062-9215-459b-b174-0705325422d0
+
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
 **This refresh trigger:** single-ticket Done for **DS-4** (user-requested `run DS-4`). DS-4 already had a generated plan + spec (`tests-generated` label present); this session re-verified the existing spec rather than regenerating it.
@@ -53,10 +55,10 @@
 
 ## Top reliability risk
 
-**Stale heal / full-generation-gate instrumentation.** The prior top risk (retries masking DS-4/DS-2 flakes) did **not** recur in this window and is downgraded. The dominant gap now is that recent CI is entirely daily **empty-backlog doc scans** — no new heal or ticket-generation PRs — so heal success (1/2) and the full generation gate (green + conforming + maps-to-AC) are unrefreshed and cannot be scored on fresh evidence.
+**Jira / Atlassian auth blocks the backlog pipeline.** Daily cron runs cannot query `project = DS AND status = "In Progress"` without Atlassian MCP or `ATLASSIAN_*` credentials, so generation-gate and heal metrics stay stale and no specs ship.
 
 ## Next action
 
-1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
-2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
-3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+1. Reconnect **Atlassian** MCP for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` (and/or bind `ATLASSIAN_EMAIL`, `ATLASSIAN_API_TOKEN`, `ATLASSIAN_BASE_URL`, `JIRA_PROJECT_KEY` plus `DIDAXIS_*` for local Playwright runs).
+2. Grant the Cloud Agent integration **`workflow_dispatch`** on `test-generation.yml` as a fallback when MCP auth fails.
+3. Move at least one DS ticket to **In Progress** without **`tests-generated`** to validate the full analyze → spec → green → PR → label loop once auth is restored.
