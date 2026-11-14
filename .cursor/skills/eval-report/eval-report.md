@@ -7,7 +7,7 @@
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
-**This refresh trigger:** single-ticket Done for **DS-4** (user-requested `run DS-4`). DS-4 already had a generated plan + spec (`tests-generated` label present); this session re-verified the existing spec rather than regenerating it.
+**This refresh trigger:** scheduled **Backlog mode** cron run **2026-11-14 10:04 UTC** (`0 10 * * *`). **Processed 0 / 5 tickets** — Atlassian MCP `needsAuth` (desktop-only OAuth); unauthenticated Jira JQL returned HTTP 200 `issues: []` (known false-empty). `workflow_dispatch` for `test-generation.yml` returned **403**. No generation/heal/local-run evidence this session; metric numerators unchanged from 2026-07-22 window.
 
 ---
 
@@ -45,18 +45,18 @@
 
 | | |
 |---|---|
-| **Number** | **This session (DS-4 run): 0 asks vs 0 invented product values.** |
-| **How measured** | Session review. Ticket read via Atlassian MCP (`getJiraIssue` DS-4); CI/PR evidence via `gh`; verification via local `npx playwright test`. No locators, credentials, or AC were invented. One judgment call recorded (not invented): proceeded despite the `tests-generated` label because the user explicitly asked to run DS-4 — flagged to the user rather than silently skipped. |
-| **What it tells us** | MCP + `gh` + local run evidence continues to beat silent defaults; the single ambiguity (already-generated ticket) was surfaced, not guessed. |
+| **Number** | **This session (2026-11-14 backlog scan): 0 asks, 0 invented tickets/AC/locators.** |
+| **How measured** | Session review. Did not treat unauthenticated Jira empty list as proof of empty queue; recorded auth block and cited automation memory snapshot instead. No Playwright run (DIDAXIS_* absent in env). |
+| **What it tells us** | Automation correctly refuses to generate specs without verified ticket ACs; operational unblock is Jira auth + env secrets, not guessing backlog contents. |
 
 ---
 
 ## Top reliability risk
 
-**Stale heal / full-generation-gate instrumentation.** The prior top risk (retries masking DS-4/DS-2 flakes) did **not** recur in this window and is downgraded. The dominant gap now is that recent CI is entirely daily **empty-backlog doc scans** — no new heal or ticket-generation PRs — so heal success (1/2) and the full generation gate (green + conforming + maps-to-AC) are unrefreshed and cannot be scored on fresh evidence.
+**Jira auth gap blocks the backlog automation.** Daily cron runs cannot enumerate `In Progress` tickets without Atlassian MCP auth or `ATLASSIAN_*` secrets in the Cloud Agent environment. Unauthenticated JQL false-empties mask real queue work; `test-generation.yml` dispatch is also blocked (integration token 403).
 
 ## Next action
 
-1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
-2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
-3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+1. **Reconnect Atlassian MCP** for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` in Cursor **Integrations**, or add `ATLASSIAN_API_TOKEN` + `ATLASSIAN_EMAIL` + `ATLASSIAN_BASE_URL` to the Cloud Agent / `dev1` secrets.
+2. Grant the GitHub app **`workflow_dispatch`** on `test-generation.yml` as a fallback when Cloud Agent Jira auth is unavailable.
+3. To queue work manually: move a DS ticket to **In Progress** and remove **`tests-generated`** until auth is fixed.
