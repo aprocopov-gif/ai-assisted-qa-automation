@@ -60,3 +60,41 @@
 1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
 2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
 3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+
+---
+
+## Backlog automation scan — 2026-11-15 (cron `0 10 * * *` UTC)
+
+**Trigger:** Cursor Automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673`  
+**Agent run:** https://cursor.com/agents/bc-50856a1d-2292-4f67-be12-b4ab6e15f275  
+**Queue JQL:** `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated)) ORDER BY priority ASC, key ASC`  
+**Budget:** 5 tickets  
+**Processed:** **0 / 5** — could not enumerate queue (Jira blocked before ticket work)
+
+### Blockers
+
+| Check | Result |
+|---|---|
+| Atlassian MCP | `needsAuth` — interactive `mcp_auth` not available in Cloud Agent |
+| Jira REST (no auth) | HTTP 200, `issues: []` — known false empty (site requires API token) |
+| `ATLASSIAN_*` in agent env | not present |
+| `gh workflow run test-generation.yml` | HTTP 403 — integration token cannot dispatch |
+| Local Playwright against Didaxis | `DIDAXIS_*` not present in agent env |
+
+### Metrics (window unchanged)
+
+Prior sections stand. Latest `e2e.yml` runs on eval scan PRs still **fail at** `playwright install chromium` — **ubuntu26.04-x64 unsupported** (e.g. run `43583602277`); no test execution, so flake/heal/generation metrics are **insufficient data** for this calendar day.
+
+### Ask-vs-guess (this scan)
+
+0 invented tickets or credentials; did not apply `tests-generated` without processing a ticket.
+
+### Top reliability risk (scan)
+
+**Jira connectivity for backlog queue selection** blocks the entire Backlog mode pipeline until Atlassian MCP is authenticated for the automation or Jira API secrets are available in the Cloud Agent environment.
+
+### Next action (ops)
+
+1. Re-authenticate **Atlassian** MCP for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` in Cursor **Integrations**, or add `ATLASSIAN_BASE_URL`, `ATLASSIAN_EMAIL`, and `ATLASSIAN_API_TOKEN` to the Cloud Agent environment secrets.
+2. Pin GitHub Actions runner to **ubuntu-24.04** (or upgrade Playwright) so eval/doc PRs can run E2E again.
+3. Move a DS ticket to **In Progress** without `tests-generated` once Jira auth works — automation will pick it up on the next cron.
