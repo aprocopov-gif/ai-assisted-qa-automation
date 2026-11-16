@@ -3,11 +3,13 @@
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `ai-assisted-qa-automation`  
 **Window:** `e2e.yml` runs 2026-07-10 → 2026-07-22 (14 daily backlog-scan runs) + related PRs, plus local DS-4 re-verify  
-**Generated:** 2026-07-22  
+**Generated:** 2026-11-16  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
-**This refresh trigger:** single-ticket Done for **DS-4** (user-requested `run DS-4`). DS-4 already had a generated plan + spec (`tests-generated` label present); this session re-verified the existing spec rather than regenerating it.
+**This refresh trigger:** Scheduled **Cursor Automation** backlog batch (`1e8b0ec6-3214-47ed-ad52-fe5e53731673`, cron 06:00 EST weekdays). **0 / 5** tickets processed — Jira queue unreachable (Atlassian MCP `needsAuth`; no `ATLASSIAN_*` / `DIDAXIS_*` in Cloud Agent env; unauthenticated Jira REST returned `issues: []`).
+
+**Prior refresh context:** single-ticket Done for **DS-4** (user-requested `run DS-4`, 2026-07-22 window below).
 
 ---
 
@@ -51,12 +53,29 @@
 
 ---
 
+## Automation backlog scan (2026-11-16)
+
+| | |
+|---|---|
+| **Queue JQL** | `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated)) ORDER BY priority ASC, key ASC` |
+| **Tickets processed** | **0 / 5** (budget unused) |
+| **Blockers** | Atlassian MCP requires desktop IDE OAuth (`mcp_auth` unavailable here); `ATLASSIAN_*` / `DIDAXIS_*` not in VM env; `gh workflow run test-generation.yml` → **403**; unauthenticated POST `/rest/api/3/search/jql` → HTTP 200 with `issues: []` (untrusted empty). |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, AC, or credentials; did not assume queue is empty. |
+| **Agent run** | https://cursor.com/agents/bc-c89182ec-5afc-475c-adea-a093e989b3ed |
+
+Historical snapshot (2026-07-30, authenticated CI): all **In Progress** DS tickets already carried `tests-generated`; work queues when a ticket is moved to **In Progress** without that label.
+
+---
+
 ## Top reliability risk
 
-**Stale heal / full-generation-gate instrumentation.** The prior top risk (retries masking DS-4/DS-2 flakes) did **not** recur in this window and is downgraded. The dominant gap now is that recent CI is entirely daily **empty-backlog doc scans** — no new heal or ticket-generation PRs — so heal success (1/2) and the full generation gate (green + conforming + maps-to-AC) are unrefreshed and cannot be scored on fresh evidence.
+**Backlog orchestration blocked by Jira integration auth.** Eight consecutive daily scans (2026-11-11 → 2026-11-16) processed **0** tickets for the same reason. Until Atlassian MCP is connected for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` (or Jira/Didaxis secrets are on the Cloud Agent / `test-generation.yml` can be dispatched), generation-gate and heal metrics stay stale and the In Progress queue cannot be trusted.
+
+Secondary: **E2E CI on doc-scan PRs** still fails early (`Playwright does not support chromium on ubuntu26.04-x64` per recent runs) — does not block backlog enumeration but hides smoke signal on scan branches.
 
 ## Next action
 
-1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
-2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
-3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+1. **Reconnect Atlassian MCP** for this automation in Cursor **Integrations** (same team as the bot), then re-run the cron or move a DS ticket to **In Progress** without `tests-generated` to validate end-to-end.
+2. Optionally add **`ATLASSIAN_*` + `DIDAXIS_*`** to the linked Cloud Agent environment, or grant the integration token **`workflow_dispatch`** on `test-generation.yml` (currently **403**).
+3. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body.
+4. Fix or pin CI runner image so `e2e.yml` is meaningful on automation doc PRs.
