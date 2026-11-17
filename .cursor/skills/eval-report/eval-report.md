@@ -9,6 +9,8 @@
 
 **This refresh trigger:** single-ticket Done for **DS-4** (user-requested `run DS-4`). DS-4 already had a generated plan + spec (`tests-generated` label present); this session re-verified the existing spec rather than regenerating it.
 
+**2026-11-17 backlog scan (cron automation, budget 5):** **0 tickets processed.** Atlassian MCP `needsAuth` (desktop reconnect only). Unauthenticated Jira JQL returned `issues: []` (untrusted — same false-empty pattern as 2026-09/11). No `tests-generated` labels added. Metrics below unchanged from 2026-07-22 core window; recent `e2e.yml` on eval-doc PRs fails at `playwright install` (`ubuntu26.04-x64` unsupported) — no new test evidence.
+
 ---
 
 ## Flake rate
