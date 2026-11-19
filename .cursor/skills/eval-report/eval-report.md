@@ -3,11 +3,15 @@
 **Suite:** Legion QA Playwright (Didaxis Studio)  
 **Repo:** `ai-assisted-qa-automation`  
 **Window:** `e2e.yml` runs 2026-07-10 → 2026-07-22 (14 daily backlog-scan runs) + related PRs, plus local DS-4 re-verify  
-**Generated:** 2026-07-22  
+**Generated:** 2026-11-19  
 
 **Note:** Cursor has **no built-in telemetry** for these metrics. Every number below was measured from CI logs (`gh`), PR history, and session review. Refresh via the `eval-report` skill — do not invent numbers; use `insufficient data` when evidence is missing.
 
-**This refresh trigger:** single-ticket Done for **DS-4** (user-requested `run DS-4`). DS-4 already had a generated plan + spec (`tests-generated` label present); this session re-verified the existing spec rather than regenerating it.
+**This refresh trigger:** Backlog mode cron (2026-11-19, automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673`).
+
+**2026-11-19 backlog scan (cron automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673`, budget 5):** **0 tickets processed.** Atlassian MCP `needsAuth` (`mcp_auth_error` on run `bc-795a96fc-ac3d-4f40-9ae5-88bd9fd6d796`; interactive auth unavailable in Cloud Agent). No `ATLASSIAN_*` / `DIDAXIS_*` in Cloud Agent env. `gh workflow run test-generation.yml` → 403. Did not treat missing Jira as an empty queue. No `tests-generated` labels added. Core metrics below unchanged.
+
+**2026-11-18 backlog scan (cron automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673`, budget 5):** **0 tickets processed.** Atlassian MCP `needsAuth` (interactive auth unavailable in Cloud Agent). Unauthenticated Jira REST (`legionqaschool.atlassian.net`) → HTTP 401; no `ATLASSIAN_*` / `DIDAXIS_*` in Cloud Agent env. `gh workflow run test-generation.yml` → 403. Did not treat empty Jira responses as an empty queue. No `tests-generated` labels added. Core metrics below unchanged; recent `e2e.yml` on eval-doc pushes still fails at `playwright install` (`ubuntu26.04-x64` unsupported).
 
 ---
 
@@ -36,7 +40,7 @@
 | | |
 |---|---|
 | **Number** | **Unchanged: first-PR CI green 2 / 2 (100%)** ([#7](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/7) DS-4, [#8](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/8) DS-1). **Full gate (green + conforming + maps-to-AC): still incomplete / unknown.** |
-| **How measured** | `gh pr list` — no new `test(DS-*)` generation PRs this window (all recent PRs #16–#24 are `docs(eval-report)` empty-scan commits). DS-4 re-verified **CI-adjacent green locally** this session (20/20) and its 19 TCs **map to AC** (both AC scenarios — confirm-delete + cancel — plus negatives/edges); conformance to `playwright-conventions.mdc` holds (role/label locators, one tag/test, self-cleaning via cleanup fixture). |
+| **How measured** | `gh pr list` — no new `test(DS-*)` generation PRs this window (recent PRs #69–#84 are `docs(eval)` empty-scan commits). DS-4 re-verified **CI-adjacent green locally** (20/20) and its 19 TCs **map to AC** (both AC scenarios — confirm-delete + cancel — plus negatives/edges); conformance to `playwright-conventions.mdc` holds (role/label locators, one tag/test, self-cleaning via cleanup fixture). |
 | **What it tells us** | No fresh generation evidence; DS-4's existing spec still passes and maps to AC, but the full conforming+AC checklist remains only half-instrumented across the suite. |
 
 ---
@@ -45,18 +49,19 @@
 
 | | |
 |---|---|
-| **Number** | **This session (DS-4 run): 0 asks vs 0 invented product values.** |
-| **How measured** | Session review. Ticket read via Atlassian MCP (`getJiraIssue` DS-4); CI/PR evidence via `gh`; verification via local `npx playwright test`. No locators, credentials, or AC were invented. One judgment call recorded (not invented): proceeded despite the `tests-generated` label because the user explicitly asked to run DS-4 — flagged to the user rather than silently skipped. |
-| **What it tells us** | MCP + `gh` + local run evidence continues to beat silent defaults; the single ambiguity (already-generated ticket) was surfaced, not guessed. |
+| **Number** | **This session (2026-11-19 backlog scan): 0 asks vs 0 invented product values.** |
+| **How measured** | Session review. Queue JQL from orchestrator Backlog mode; did not invent ticket keys or AC. Atlassian MCP auth unavailable; Jira REST not called with guessed credentials; `gh workflow run` failed with 403 — reported as blocker, not workaround. Prior automation memory + `gh run list` for CI context only. |
+| **What it tells us** | Repeated Jira-auth gaps block backlog execution; stopping at enumeration is correct — guessing an empty queue would inflate ask-vs-guess risk. |
 
 ---
 
 ## Top reliability risk
 
-**Stale heal / full-generation-gate instrumentation.** The prior top risk (retries masking DS-4/DS-2 flakes) did **not** recur in this window and is downgraded. The dominant gap now is that recent CI is entirely daily **empty-backlog doc scans** — no new heal or ticket-generation PRs — so heal success (1/2) and the full generation gate (green + conforming + maps-to-AC) are unrefreshed and cannot be scored on fresh evidence.
+**Jira integration auth on Cloud Agent runs** — backlog automation cannot enumerate or label tickets without Atlassian MCP or `ATLASSIAN_*` secrets; daily cron runs produce doc-only PRs and **0 / 5** ticket throughput. Secondary: stale heal / full-generation-gate instrumentation (no new generation PRs since DS-1/DS-4 window).
 
 ## Next action
 
-1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
-2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
-3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+1. Reconnect **Atlassian** MCP for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` (Cursor → Integrations) **or** grant Cloud Agent `ATLASSIAN_*` / `DIDAXIS_*` and `workflow_dispatch` on `test-generation.yml`.
+2. Queue work by moving a DS ticket to **In Progress** without the `tests-generated` label.
+3. Fix CI runner / `playwright install` on `ubuntu26.04-x64` so eval-doc PRs regain smoke signal.
+4. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body.
