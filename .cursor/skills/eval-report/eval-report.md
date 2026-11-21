@@ -60,3 +60,30 @@
 1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
 2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
 3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+
+---
+
+## Backlog automation scan (dated note — metrics unchanged)
+
+**Run:** 2026-11-20 10:01 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-b459c3d3-2e28-4405-bb64-5ffd07ba997e))
+
+| | |
+|---|---|
+| **Queue** | JQL: `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated)) ORDER BY priority ASC, key ASC` — **not executed** (Jira unreachable). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | Atlassian MCP `needsAuth` / `mcp_auth_error` (Cloud Agent cannot complete interactive OAuth). `ATLASSIAN_*` env unset. `gh workflow run test-generation.yml` → **403** Resource not accessible by integration. |
+| **Fallback memory snapshot** | Last verified queue (2026-07-30): all In Progress DS tickets already had `tests-generated`; work requires a ticket moved to In Progress **without** that label. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; did not guess Jira queue contents. |
+| **CI window note** | Last 5 `e2e.yml` runs (2026-11-17→19) are eval/doc scan PRs — **failure** (`chromium` / `ubuntu26.04-x64` install); no new flake/heal/generation evidence. Core metrics above **unchanged**. |
+
+**Next action (ops):** Reconnect **Atlassian** integration for this automation in Cursor → Integrations; optionally add `ATLASSIAN_*` to the Cloud Agent environment. Grant the integration `workflow_dispatch` on `test-generation.yml` if GitHub Actions should backfill when MCP is down.
+
+**Run:** 2026-11-21 10:00 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-c4137706-3f6e-4032-9c0c-69984a4cdeb8))
+
+| | |
+|---|---|
+| **Queue** | Same JQL — **not executed** (Jira unreachable). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | Atlassian MCP `needsAuth`; interactive `mcp_auth` unavailable in Cloud Agent (`mcp_auth_error`). `ATLASSIAN_*` env unset. `gh workflow run test-generation.yml` → **403**. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; stopped at queue fetch per orchestrator — did not process tickets from memory snapshot. |
+| **CI window note** | Last 5 `e2e.yml` runs include 2026-11-20 eval scan PR ([#86](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/86)) — **failure** (`chromium` / `ubuntu26.04-x64`); core metrics above **unchanged**. |
