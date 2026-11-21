@@ -77,3 +77,13 @@
 | **CI window note** | Last 5 `e2e.yml` runs (2026-11-17→19) are eval/doc scan PRs — **failure** (`chromium` / `ubuntu26.04-x64` install); no new flake/heal/generation evidence. Core metrics above **unchanged**. |
 
 **Next action (ops):** Reconnect **Atlassian** integration for this automation in Cursor → Integrations; optionally add `ATLASSIAN_*` to the Cloud Agent environment. Grant the integration `workflow_dispatch` on `test-generation.yml` if GitHub Actions should backfill when MCP is down.
+
+**Run:** 2026-11-21 10:00 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-c4137706-3f6e-4032-9c0c-69984a4cdeb8))
+
+| | |
+|---|---|
+| **Queue** | Same JQL — **not executed** (Jira unreachable). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | Atlassian MCP `needsAuth`; interactive `mcp_auth` unavailable in Cloud Agent (`mcp_auth_error`). `ATLASSIAN_*` env unset. `gh workflow run test-generation.yml` → **403**. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; stopped at queue fetch per orchestrator — did not process tickets from memory snapshot. |
+| **CI window note** | Last 5 `e2e.yml` runs include 2026-11-20 eval scan PR ([#86](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/86)) — **failure** (`chromium` / `ubuntu26.04-x64`); core metrics above **unchanged**. |
