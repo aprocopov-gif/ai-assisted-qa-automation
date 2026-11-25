@@ -60,3 +60,71 @@
 1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
 2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
 3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+
+---
+
+## Backlog automation scan (dated note — metrics unchanged)
+
+**Run:** 2026-11-20 10:01 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-b459c3d3-2e28-4405-bb64-5ffd07ba997e))
+
+| | |
+|---|---|
+| **Queue** | JQL: `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated)) ORDER BY priority ASC, key ASC` — **not executed** (Jira unreachable). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | Atlassian MCP `needsAuth` / `mcp_auth_error` (Cloud Agent cannot complete interactive OAuth). `ATLASSIAN_*` env unset. `gh workflow run test-generation.yml` → **403** Resource not accessible by integration. |
+| **Fallback memory snapshot** | Last verified queue (2026-07-30): all In Progress DS tickets already had `tests-generated`; work requires a ticket moved to In Progress **without** that label. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; did not guess Jira queue contents. |
+| **CI window note** | Last 5 `e2e.yml` runs (2026-11-17→19) are eval/doc scan PRs — **failure** (`chromium` / `ubuntu26.04-x64` install); no new flake/heal/generation evidence. Core metrics above **unchanged**. |
+
+**Run:** 2026-11-21 10:01 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-c4137706-3f6e-4032-9c0c-69984a4cdeb8))
+
+| | |
+|---|---|
+| **Queue** | Same JQL — **not executed** (Jira unreachable). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | Atlassian MCP `needsAuth`; interactive `mcp_auth` unavailable in Cloud Agent (`mcp_auth_error`). `ATLASSIAN_*` env unset. `gh workflow run test-generation.yml` → **403**. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; stopped at queue fetch per orchestrator — did not process tickets from memory snapshot. |
+| **CI window note** | Last 5 `e2e.yml` runs include 2026-11-20 eval scan PR ([#86](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/86)) — **failure** (`chromium` / `ubuntu26.04-x64`); core metrics above **unchanged**. |
+
+**Run:** 2026-11-22 10:01 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-b7e6d1f6-cefd-4103-a28d-04efcf1590eb))
+
+| | |
+|---|---|
+| **Queue** | Same JQL — **not executed** (Jira unreachable). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | Atlassian MCP `needsAuth` (`cursor-cloud-get-events` → `mcp_auth_error`). `ATLASSIAN_*` / `DIDAXIS_*` env unset on pod. `gh workflow run test-generation.yml` → **403**. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; exited before analyze/implement per orchestrator backlog mode. |
+| **CI window note** | Last 5 `e2e.yml` runs include 2026-11-21 eval scan PR ([#87](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/87)) — **failure** (`chromium` / `ubuntu26.04-x64`); core metrics above **unchanged**. |
+
+**Run:** 2026-11-23 10:01 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-6870f9a0-b78a-4d3e-8bfa-f7299a7fa5bb))
+
+| | |
+|---|---|
+| **Queue** | Same JQL — **not executed** (Atlassian MCP `needsAuth`; unauthenticated Jira REST returns empty `issues[]` — not used as queue). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | `mcp_auth` for Atlassian unavailable in Cloud Agent. `ATLASSIAN_*` / `DIDAXIS_*` env unset. `gh workflow run test-generation.yml` → **403**. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; stopped at queue fetch per orchestrator backlog mode. |
+| **CI window note** | Latest `e2e.yml` run **45010461034** (PR [#88](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/88)) — **failure** (`Playwright does not support chromium on ubuntu26.04-x64`); core metrics above **unchanged**. |
+
+
+**Run:** 2026-11-24 10:02 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-409a3d89-b234-4b81-891e-40dca40e3ac7))
+
+| | |
+|---|---|
+| **Queue** | Same JQL — **not executed** (Atlassian MCP `needsAuth`; `mcp_auth` unavailable in Cloud Agent). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | `cursor-cloud-get-events` → `mcp_auth_error` for Atlassian. `ATLASSIAN_*` / `DIDAXIS_*` env unset. `gh workflow run test-generation.yml` → **403**. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; stopped at queue fetch per orchestrator backlog mode. |
+| **CI window note** | Latest `e2e.yml` run **45152406329** (PR [#89](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/89)) — **failure** (`Playwright does not support chromium on ubuntu26.04-x64`); core metrics above **unchanged**. |
+
+**Run:** 2026-11-25 10:01 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-5ed9d611-376c-4a5b-b566-fb7579ea6379))
+
+| | |
+|---|---|
+| **Queue** | Same JQL — **not executed** (Atlassian MCP `needsAuth`; interactive `mcp_auth` unavailable in Cloud Agent). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | `cursor-cloud-get-events` → `mcp_auth_error` for Atlassian. Unauthenticated Jira REST returned **410** (not used as queue). `ATLASSIAN_*` / `DIDAXIS_*` env unset on pod. `gh workflow run test-generation.yml` → **403**. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; stopped at queue fetch per orchestrator backlog mode. |
+| **CI window note** | Latest `e2e.yml` run **45371008588** (PR [#90](https://github.com/aprocopov-gif/ai-assisted-qa-automation/pull/90)) — **failure** (`Playwright does not support chromium on ubuntu26.04-x64`); core metrics above **unchanged**. |
+
+**Next action (ops):** Reconnect **Atlassian** for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` under Cursor → Integrations; optionally bind `ATLASSIAN_*` / `DIDAXIS_*` on the Cloud Agent environment. Grant `workflow_dispatch` on `test-generation.yml` if Actions should backfill when MCP is down. Pin `e2e.yml` to an image Playwright supports (or upgrade Playwright) so eval scan PRs can run the suite again.
