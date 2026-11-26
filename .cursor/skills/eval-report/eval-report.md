@@ -60,3 +60,19 @@
 1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
 2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
 3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+
+---
+
+## Backlog automation scan (dated note — metrics unchanged)
+
+**Run:** 2026-11-26 10:03 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-0b4a3ea1-ddcd-4217-a1c0-18af644c0319))
+
+| | |
+|---|---|
+| **Queue** | JQL: `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated)) ORDER BY priority ASC, key ASC` — **not authoritative** (Atlassian MCP `needsAuth`; unauthenticated Jira REST returned `issues[]` empty — treated as queue fetch failure, not empty backlog). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | `cursor-cloud-get-events` → `mcp_auth_error` for Atlassian; interactive `mcp_auth` unavailable in Cloud Agent. `ATLASSIAN_*` / `DIDAXIS_*` env unset on pod. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; stopped at queue fetch per orchestrator backlog mode. |
+| **CI window note** | Latest `e2e.yml` runs **45591138481** / **45591119477** (PR [#91](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/91)) — **failure** (`Playwright does not support chromium on ubuntu26.04-x64`); core metrics above **unchanged**. |
+
+**Next action (ops):** Reconnect **Atlassian** for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` under Cursor → Integrations; bind `ATLASSIAN_EMAIL`, `ATLASSIAN_API_TOKEN`, `ATLASSIAN_BASE_URL`, `JIRA_PROJECT_KEY`, and `DIDAXIS_*` on the Cloud Agent environment ([dashboard](https://cursor.com/dashboard/cloud-agents/environments/e/3a226ccb-ba5a-11f1-977f-f6b8f2fcf9b2)). Pin `e2e.yml` to a runner image Playwright supports (or upgrade Playwright) so eval scan PRs can run the suite again.
