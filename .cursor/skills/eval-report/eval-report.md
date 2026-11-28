@@ -60,3 +60,19 @@
 1. On the **next real generation or heal PR**, capture first-PR-green + conformance + AC-map in the PR body so the generation-gate and heal metrics leave the stale state.
 2. Keep watching **DS-4 TC-004/TC-017** and **DS-2 TC-002** on PR/push slices to confirm the flake regression is durable (2+ more windows at 0).
 3. When a heal is needed, use branch `heal/<spec-slug>` and prove green with **assertions unchanged** to keep heal success rate measurable under the orchestrator path.
+
+---
+
+## Backlog automation scan (dated note — metrics unchanged)
+
+**Run:** 2026-11-28 10:04 UTC — automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` ([agent run](https://cursor.com/agents/bc-71e55aa1-43a9-46ff-b309-6a86a6a0bfb2))
+
+| | |
+|---|---|
+| **Queue** | JQL: `project = DS AND status = "In Progress" AND (labels is EMPTY OR labels not in (tests-generated)) ORDER BY priority ASC, key ASC` — **not authoritative** (Atlassian MCP `needsAuth`; unauthenticated `GET /rest/api/3/search/jql` on `legionqaschool.atlassian.net` returned HTTP 200 with `issues[]` empty — queue fetch failure, not proven empty backlog). |
+| **Processed** | **0 / 5** tickets |
+| **Blockers** | `cursor-cloud-get-events` → `mcp_auth_error` for Atlassian; interactive `mcp_auth` unavailable in Cloud Agent. No `ATLASSIAN_*` or `DIDAXIS_*` env on pod; `list-available-secrets` reports no bound secrets. |
+| **Ask-vs-guess (this run)** | **0 invented** ticket keys, ACs, or credentials; exited before per-ticket routing per orchestrator backlog mode. |
+| **CI window note** | Latest `e2e.yml` runs **45978951697** / **45978932792** (PR [#93](https://github.com/aprocopov-gif/legion-qa-ai-assisted-program-ann/pull/93)) — **failure** (`Playwright does not support chromium on ubuntu26.04-x64`); core metrics above **unchanged**. |
+
+**Next action (ops):** Reconnect **Atlassian** for automation `1e8b0ec6-3214-47ed-ad52-fe5e53731673` under Cursor → Integrations; bind `ATLASSIAN_EMAIL`, `ATLASSIAN_API_TOKEN`, `ATLASSIAN_BASE_URL`, `JIRA_PROJECT_KEY`, and `DIDAXIS_*` on Cloud Agent environment `3a226ccb-ba5a-11f1-977f-f6b8f2fcf9b2`. Pin `e2e.yml` to a Playwright-supported runner image (or upgrade Playwright) so eval scan PRs can execute the suite again.
